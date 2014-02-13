@@ -1,7 +1,7 @@
 <div data-ng-controller="HomeController">
     <div class="recently_added movies">
-        <div class="item arrow-prev" ng-click="showPrev('movies');">&lt;</div>
-        <div class="item" data-ng-repeat="movie in recent_movies | limitTo: limit.movies | limitTo: -5">
+        <div class="item arrow-prev" data-ng-click="showPrev('movies');">&lt;</div>
+        <div class="item" data-ng-repeat="movie in recent_movies | limitTo: limit.movies | limitTo: -5" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
             <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
                 <div class="title">{{ movie.title }}</div>
             </div>

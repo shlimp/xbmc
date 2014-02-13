@@ -2,8 +2,24 @@
 
 /* Controllers */
 angular.module('xbmc.controllers', [])
-    .controller('HomeController', function($scope, VIDEO, HOST){
+    .controller("MainController", ["$scope", "VIDEO", "HOST", function($scope, VIDEO, HOST){
         $scope.HOST = HOST;
+        $scope.get_movie_details = function(){
+            VIDEO.getMovieDetails($scope.movieid).then(function(data){
+                if (data.moviedetails.trailer.substring(0, data.moviedetails.trailer.indexOf("?")) == 'plugin://plugin.video.youtube/') {
+                    var trailer_id = data.moviedetails.trailer.substr(data.moviedetails.trailer.lastIndexOf("=") + 1);
+                    data.moviedetails.trailer_url = "http://www.youtube.com/embed/" + trailer_id;
+                }
+                $scope.movie_details = data.moviedetails;
+                console.log($scope.movie_details)
+            });
+        };
+
+        $scope.clean_movie_details = function(){
+            $scope.movie_details = null;
+        }
+    }])
+    .controller('HomeController', ["$scope", "VIDEO", "HOST", function($scope, VIDEO){
         $scope.limit = {
             movies: 5,
             episodes: 5
@@ -38,11 +54,11 @@ angular.module('xbmc.controllers', [])
             }
         };
 
-        $scope.$on(VIDEO.prefix + 'OnScanFinished', function(a,b){
+        $scope.$on(VIDEO.prefix + 'OnScanFinished', function(){
             getRecent();
         });
 
-        $scope.$on(VIDEO.prefix + 'OnCleanFinished', function(a,b){
+        $scope.$on(VIDEO.prefix + 'OnCleanFinished', function(){
             getRecent();
         });
 
@@ -59,13 +75,13 @@ angular.module('xbmc.controllers', [])
                     $scope.limit.episodes = 5;
                 }
             }
-        }
-    })
-    .controller('LeftMenuController', function($scope, COMMANDS){
+        };
+    }])
+    .controller('LeftMenuController', ["$scope", "COMMANDS", function($scope, COMMANDS){
         $scope.show = true;
         $scope.commands = COMMANDS.commands;
-    })
-    .controller('NotificationController', function($scope, $interval, VIDEO){
+    }])
+    .controller('NotificationController', ["$scope", "$interval", "VIDEO", function($scope, $interval, VIDEO){
         $scope.notifications = [];
         function notification_listener(method){
             var msg = "";
@@ -100,4 +116,4 @@ angular.module('xbmc.controllers', [])
         }, 10000);
 
         VIDEO.registerListener(null, notification_listener);
-    });
+    }]);

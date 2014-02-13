@@ -17,7 +17,7 @@ angular.module('xbmc.services', [])
         var listeners = {general: []};
 
         ws.onopen = function () {
-            console.log("Socket has been opened!");
+//            console.log("Socket has been opened!");
             socket_ready = true;
             $rootScope.$broadcast('socket_ready', socket_ready);
         };
@@ -34,13 +34,13 @@ angular.module('xbmc.services', [])
                 cb: defer
             };
             request.id = callbackId;
-            console.log('Sending request', request);
+//            console.log('Sending request', request);
             ws.send(JSON.stringify(request));
             return defer.promise;
         }
 
         function listener(data) {
-            console.log("Received data from websocket: ", data);
+//            console.log("Received data from websocket: ", data);
             // If an object exists with callback_id in our callbacks object, resolve it
             if (callbacks.hasOwnProperty(data.id)) {
                 callbacks[data.id].cb.resolve(data.result);
@@ -114,6 +114,10 @@ angular.module('xbmc.services', [])
 
         Service.getRecentlyAddedEpisodes = function(){
             return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle"], sort: {order: "descending", method: "dateadded"}});
+        };
+
+        Service.getMovieDetails = function(movie_id){
+            return XBMC_API.sendRequest(prefix + "GetMovieDetails", {movieid: movie_id, properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer"]});
         };
 
         Service.scan = function(){

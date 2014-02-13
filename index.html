@@ -17,7 +17,7 @@
     <script type="text/javascript" src="js/directives.js"></script>
     <script type="text/javascript" src="js/init.js"></script>
 </head>
-<body>
+<body data-ng-controller="MainController">
 
 <div class="notifications" data-ng-controller="NotificationController" data-ng-show="notifications.length>0">
     <ul>
@@ -39,6 +39,24 @@
     <div class="toggler_wrapper"><div class="toggler" data-ng-click="show=!show"></div></div>
 </div>
 <div class="content" data-ng-view></div>
+
+<div class="movie_modal" data-modal-dialog data-show="$root.movie_details_show" data-width="1000px" data-height="700px" data-on-open="get_movie_details()" data-on-close="clean_movie_details()">
+    <div class="poster"><img data-ng-src="http://{{ HOST }}:8080/image/{{ movie_details.art.poster | encode }}" width="400"/></div>
+    <div class="details">
+        <div class="line title">{{ movie_details.title }}</div>
+        <div class="line">
+            <div class="label">Plot: </div>
+            <div class="value">{{ movie_details.plot }}</div>
+        </div>
+        <div class="line">
+            <div class="label">IMDB: </div>
+            <div class="value"><a href="http://www.imdb.com/title/{{ movie_details.imdbnumber }}" target="_blank">{{ movie_details.imdbnumber }}</a></div>
+        </div>
+        <div class="line trailer">
+            <iframe width="560" height="315" src="{{movie_details.trailer_url}}" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
