@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="css/xbmc.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/lib/angular.js"></script>
+    <script type="text/javascript" src="js/lib/angular-route.js"></script>
+    <script type="text/javascript" src="js/lib/angular-resource.js"></script>
+    <script type="text/javascript" src="js/lib/angular-animate.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/settings_local.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/filters.js"></script>
+    <script type="text/javascript" src="js/services.js"></script>
+    <script type="text/javascript" src="js/controllers.js"></script>
+    <script type="text/javascript" src="js/directives.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+</head>
+<body>
+
+<div class="notifications" data-ng-controller="NotificationController" data-ng-show="notifications.length>0">
+    <ul>
+        <li data-ng-repeat="notification in notifications">{{ notification.msg }}</li>
+    </ul>
+</div>
+
+<div class="left_menu_container" data-ng-controller="LeftMenuController">
+    <div class="left_menu" data-ng-show="show">
+        <div class="autocomplete" data-auto-complete="commands">
+            <input type="text" placeholder="Commands" data-ng-model="query_items" data-ng-focus="open()" data-ng-blur="close()" tabindex="1" />
+            <div class="items" data-ng-show="show_items">
+                <ul>
+                    <li data-ng-repeat="command in filtered_items = (commands | filter:query_items)" ng-click="select($index)" data-ng-mouseover="on_mouse_over($event)" data-ng-mouseleave="on_mouse_leave($event)">{{ command.name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="toggler_wrapper"><div class="toggler" data-ng-click="show=!show"></div></div>
+</div>
+<div class="content" data-ng-view></div>
+
+</body>
+</html>

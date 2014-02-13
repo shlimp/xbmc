@@ -1,0 +1,216 @@
+/*
+general styles
+*/
+html{
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Verdana;
+    height: 100%;
+    font-size: 12px;
+}
+
+input[type="text"]{
+    width: 160px;
+    border: 1px solid deepskyblue;
+    border-radius: 3px;
+}
+
+ul {
+    text-align: left;
+    margin: 0 0 0 -40px;
+    list-style: none;
+}
+
+/*
+autocomplete
+*/
+.autocomplete ul li{
+    padding: 5px;
+}
+
+.autocomplete ul li:hover, .autocomplete ul li.hover{
+    background: rgba(0, 191, 255, 0.3);
+}
+
+.autocomplete .items {
+    display: inline-block;
+    width: 160px;
+    border: 1px solid deepskyblue;
+    border-top: 0;
+    border-radius: 0 0 3px 3px;
+}
+
+/*
+notifications styles
+*/
+div.notifications{
+    border: 1px solid deepskyblue;
+    border-radius: 5px;
+    padding: 0 10px 10px 10px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: rgba(0, 0, 0, 0.3);
+
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.5s linear;
+    -o-transition: all 0.5s linear;
+    transition: all 0.2s linear;
+}
+
+div.notifications.ng-hide-add, div.notifications.ng-hide-remove {
+    display:block!important;
+    opacity: 1;
+}
+
+div.notifications.ng-hide{
+    opacity: 0;
+}
+
+div.notifications li{
+    color: #FFFFFF;
+    font-size: 20px;
+    padding-top: 10px;
+}
+
+/*
+left menu styles
+*/
+div.left_menu_container{
+    float: left;
+    height: 100%;
+}
+
+div.left_menu {
+    float: left;
+    position: relative;
+    width: 200px;
+    height: 100%;
+    left:0;
+    text-align: center;
+
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.5s linear;
+    -o-transition: all 0.5s linear;
+    transition: all 0.2s linear;
+}
+
+div.left_menu.ng-hide-add, div.left_menu.ng-hide-remove {
+    display:block!important;
+}
+
+div.left_menu.ng-hide{
+    width: 0;
+    left: -200px;
+}
+
+div.left_menu_container .toggler_wrapper{
+    height: 100%;
+    width: 10px;
+    float: left;
+    border-right: 1px solid deepskyblue;
+    box-shadow: 5px 0 5px -2px #888;
+    position: relative;
+    left: -10px;
+}
+
+div.left_menu_container .toggler_wrapper .toggler{
+    position: absolute;
+    width: 10px;
+    height: 50px;
+    background-color: deepskyblue;
+    border-radius: 0 5px 5px 0;
+    top: 45%;
+    z-index: 999;
+    margin-left: 10px;
+}
+
+div.content {
+    float: left;
+    /*width: 100%;*/
+    height: 100%;
+}
+
+/*
+recently added
+*/
+div.recently_added {
+    width: 1100px;
+    height: 300px;
+    vertical-align: middle;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+div.recently_added .item {
+    width: 200px;
+    height: 300px;
+    display: inline-flex;
+    position: relative;
+    white-space: normal;
+    /*left: 0;*/
+}
+
+div.recently_added .item .image {
+    margin: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+}
+
+div.recently_added .item .image .title {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+div.recently_added.movies .item .image {
+    width: 150px;
+    height: 225px;
+    background-size: 150px 225px;
+}
+
+div.recently_added.shows .item .image {
+    width: 150px;
+    height: 84px;
+    background-size: 150px 84px;
+}
+
+div.recently_added .arrow-next, div.recently_added .arrow-prev {
+    width: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    top: 30%;
+}
+
+.item.ng-enter, .item.ng-leave {
+    -webkit-transition: all 0.3s linear;
+    -moz-transition: all 0.5s linear;
+    -o-transition: all 0.5s linear;
+    transition: all 0.3s linear;
+}
+
+.item.ng-enter {
+    left: 1000px;
+    /*width: 0;*/
+}
+
+.item.ng-enter.ng-enter-active {
+    left: 0;
+    /*width: 200px;*/
+}
+
+.item.ng-leave {
+    left: -980px;
+    /*width: 200px;*/
+}
+
+.item.ng-leave.ng-leave-active {
+    left: -2000px;
+    /*width: 0;*/
+}

@@ -1,0 +1,21 @@
+<div data-ng-controller="HomeController">
+    <div class="recently_added movies">
+        <div class="item arrow-prev" ng-click="showPrev('movies');">&lt;</div>
+        <div class="item" data-ng-repeat="movie in recent_movies | limitTo: limit.movies | limitTo: -5">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
+                <div class="title">{{ movie.title }}</div>
+            </div>
+        </div>
+        <div class="item arrow-next" ng-click="showNext('movies');">&gt;</div>
+    </div>
+
+    <div class="recently_added shows">
+        <div class="item arrow-prev" ng-click="showPrev('episodes');">&lt;</div>
+        <div class="item" data-ng-repeat="episode in recent_episodes | limitTo: limit.episodes | limitTo: -5">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ episode.thumbnail | encode }}')">
+                <div class="title">{{ episode.showtitle }} ({{ episode.label }})</div>
+            </div>
+        </div>
+        <div class="item arrow-next" ng-click="showNext('episodes');">&gt;</div>
+    </div>
+</div>
