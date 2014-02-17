@@ -34,7 +34,6 @@ angular.module('xbmc.services', [])
         };
 
         ws.onmessage = function (message) {
-//            console.log("received " + JSON.parse(message.data).id)
             listener(JSON.parse(message.data));
         };
 
@@ -56,7 +55,7 @@ angular.module('xbmc.services', [])
         }
 
         function listener(data) {
-//            console.log("Received data from websocket: ", data);
+            console.log("Received data from websocket: ", data);
             // If an object exists with callback_id in our callbacks object, resolve it
             if (callbacks.hasOwnProperty(data.id)) {
                 if(callbacks[data.id].notify){
@@ -140,11 +139,11 @@ angular.module('xbmc.services', [])
         };
 
         Service.getRecentlyAddedMovies = function(){
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
         };
 
         Service.getRecentlyAddedEpisodes = function(){
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle"], sort: {order: "descending", method: "dateadded"}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
         };
 
         Service.getMovieDetails = function(movie_id){
@@ -156,8 +155,7 @@ angular.module('xbmc.services', [])
         };
 
         Service.searchTVShows = function(val){
-            var result = {};
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season"], sort: {order: "ascending", method: "label"}}, true)
+            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season"], sort: {order: "ascending", method: "label"}}, true);
             return promise.promise.then(
                 null,
                 null,
@@ -166,7 +164,6 @@ angular.module('xbmc.services', [])
                     var i = 0;
                     if(data.tvshows){
                         var interval = $interval(function(){
-//                            console.log(i)
                             var item = data.tvshows[i];
                             XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: item.tvshowid, properties: ["tvshowid", "season", "episode"]}).then(
                                 function(season_data){

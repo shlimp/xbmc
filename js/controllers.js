@@ -47,10 +47,6 @@ angular.module('xbmc.controllers', [])
         }
     }])
     .controller('HomeController', ["$scope", "VIDEO", "HOST", function($scope, VIDEO){
-        $scope.limit = {
-            movies: 5,
-            episodes: 5
-        };
         $scope.$on('socket_ready', function(e,val){
             if (val){
                 getRecent();
@@ -59,27 +55,12 @@ angular.module('xbmc.controllers', [])
 
         function getRecent(){
             VIDEO.getRecentlyAddedMovies().then(function(data){
-                $scope.recent_movies = data.movies}
-            );
+                $scope.recent_movies = data.movies;
+            });
             VIDEO.getRecentlyAddedEpisodes().then(function(data){
-                $scope.recent_episodes = data.episodes}
-            );
+                $scope.recent_episodes = data.episodes;
+            });
         }
-
-        $scope.showNext = function(what_to_show){
-            if(what_to_show == "movies"){
-                $scope.limit.movies += 5;
-                if($scope.limit.movies > $scope.recent_movies.length){
-                    $scope.limit.movies = 5;
-                }
-            }
-            else if (what_to_show == "episodes"){
-                $scope.limit.episodes += 5;
-                if($scope.limit.episodes> $scope.recent_episodes.length){
-                    $scope.limit.episodes = 5;
-                }
-            }
-        };
 
         $scope.$on(VIDEO.prefix + 'OnScanFinished', function(){
             getRecent();
@@ -88,21 +69,6 @@ angular.module('xbmc.controllers', [])
         $scope.$on(VIDEO.prefix + 'OnCleanFinished', function(){
             getRecent();
         });
-
-        $scope.showPrev = function(what_to_show){
-            if(what_to_show == "movies"){
-                $scope.limit.movies -= 5;
-                if($scope.limit.movies < 5){
-                    $scope.limit.movies = 5;
-                }
-            }
-            else if (what_to_show == "episodes"){
-                $scope.limit.episodes -= 5;
-                if($scope.limit.episodes < 5){
-                    $scope.limit.episodes = 5;
-                }
-            }
-        };
     }])
     .controller('LeftMenuController', ["$scope", "COMMANDS", function($scope, COMMANDS){
         $scope.show = true;

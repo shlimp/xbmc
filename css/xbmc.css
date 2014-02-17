@@ -200,11 +200,32 @@ div.recently_added .item {
     /*left: 0;*/
 }
 
+.item.ng-enter, .item.ng-leave {
+    transition: transform 0.2s ease-in-out;
+}
+
+.item.ng-enter {
+    transform: scale(1.2);
+}
+
+.item.ng-enter.ng-enter-active {
+    transform: scale(1);
+}
+
+
 div.recently_added .item .image {
     margin: auto;
     background-repeat: no-repeat;
     background-position: center;
     text-align: center;
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+    -webkit-transition: box-shadow 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+}
+
+div.recently_added .item .image:hover{
+    box-shadow: 4px 4px 4px #000;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
 }
 
 div.recently_added .item .image .title {
@@ -225,33 +246,6 @@ div.recently_added.shows .item .image {
     width: 150px;
     height: 84px;
     background-size: 150px 84px;
-}
-
-div.recently_added .arrow-next, div.recently_added .arrow-prev {
-    width: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    top: 30%;
-}
-
-.item.ng-enter, .item.ng-leave {
-    transition: all 0.3s linear;
-}
-
-.item.ng-enter {
-    left: 1000px;
-}
-
-.item.ng-enter.ng-enter-active {
-    left: 0;
-}
-
-.item.ng-leave {
-    left: -980px;
-}
-
-.item.ng-leave.ng-leave-active {
-    left: -2000px;
 }
 
 /*
