@@ -5,7 +5,7 @@ angular.module('xbmc.controllers', [])
     .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", function($scope, $rootScope, VIDEO, HOST){
         $scope.HOST = HOST;
         $scope.get_movie_details = function(){
-            VIDEO.getMovieDetails($scope.movieid).then(function(data){
+            VIDEO.getMovieDetails($rootScope.movieid).then(function(data){
                 if (data.moviedetails.trailer.substring(0, data.moviedetails.trailer.indexOf("?")) == 'plugin://plugin.video.youtube/') {
                     var trailer_id = data.moviedetails.trailer.substr(data.moviedetails.trailer.lastIndexOf("=") + 1);
                     data.moviedetails.trailer_url = "http://www.youtube.com/embed/" + trailer_id;
@@ -36,8 +36,9 @@ angular.module('xbmc.controllers', [])
 
         $scope.select_item = function(item){
             if(item.movieid){
-                $scope.movieid = item.movieid;
+                $rootScope.movieid = item.movieid;
                 $rootScope.movie_details_show = true;
+                $rootScope.$apply();
             }
         };
 
