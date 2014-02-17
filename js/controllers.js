@@ -2,7 +2,7 @@
 
 /* Controllers */
 angular.module('xbmc.controllers', [])
-    .controller("MainController", ["$scope", "VIDEO", "HOST", function($scope, VIDEO, HOST){
+    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", function($scope, $rootScope, VIDEO, HOST){
         $scope.HOST = HOST;
         $scope.get_movie_details = function(){
             VIDEO.getMovieDetails($scope.movieid).then(function(data){
@@ -17,6 +17,10 @@ angular.module('xbmc.controllers', [])
         $scope.search_results = [];
 
         $scope.search = function(val){
+            if(!val){
+                $scope.search_results = [];
+                return false;
+            }
             var results = [];
             VIDEO.searchMovies(val).then(function(data){
                 if(data.movies)
@@ -27,13 +31,14 @@ angular.module('xbmc.controllers', [])
                     results = results.concat(data.tvshows);
                 $scope.search_results = results;
             });
+            return true;
         };
 
         $scope.select_item = function(item){
-            console.log(item);
-            var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(item.episodeguide, "text/xml");
-            var guide_zip = angular.element(xmlDoc).find("url").text();
+            if(item.movieid){
+                $scope.movieid = item.movieid;
+                $rootScope.movie_details_show = true;
+            }
         };
 
         $scope.clean_movie_details = function(){

@@ -43,6 +43,7 @@
                 <br />
                 <span data-ng-if="item.season">
                     latest episode: {{ item.latest_season | leading_zero }}x{{ item.latest_episode | leading_zero }}
+                    <br />
                     Search for next on:
                     <a href="http://torrentleech.org/torrents/browse/index/query/{{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrenleach</a>
                     <a href="http://torrentz.eu/search?f={{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrentz</a>
