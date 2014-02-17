@@ -11,8 +11,29 @@ angular.module('xbmc.controllers', [])
                     data.moviedetails.trailer_url = "http://www.youtube.com/embed/" + trailer_id;
                 }
                 $scope.movie_details = data.moviedetails;
-                console.log($scope.movie_details)
             });
+        };
+
+        $scope.search_results = [];
+
+        $scope.search = function(val){
+            var results = [];
+            VIDEO.searchMovies(val).then(function(data){
+                if(data.movies)
+                    results = results.concat(data.movies);
+                return VIDEO.searchTVShows(val);
+            }).then(function(data){
+                if(data.tvshows)
+                    results = results.concat(data.tvshows);
+                $scope.search_results = results;
+            });
+        };
+
+        $scope.select_item = function(item){
+            console.log(item);
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(item.episodeguide, "text/xml");
+            var guide_zip = angular.element(xmlDoc).find("url").text();
         };
 
         $scope.clean_movie_details = function(){
@@ -80,6 +101,12 @@ angular.module('xbmc.controllers', [])
     .controller('LeftMenuController', ["$scope", "COMMANDS", function($scope, COMMANDS){
         $scope.show = true;
         $scope.commands = COMMANDS.commands;
+
+        $scope.run_command = function(item){
+            if (item.func){
+                item.func();
+            }
+        }
     }])
     .controller('NotificationController', ["$scope", "$interval", "VIDEO", function($scope, $interval, VIDEO){
         $scope.notifications = [];

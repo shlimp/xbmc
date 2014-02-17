@@ -7,6 +7,7 @@
     <script type="text/javascript" src="js/lib/angular-route.js"></script>
     <script type="text/javascript" src="js/lib/angular-resource.js"></script>
     <script type="text/javascript" src="js/lib/angular-animate.js"></script>
+    <script type="text/javascript" src="js/lib/jszip.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/settings.js"></script>
     <script type="text/javascript" src="js/settings_local.js"></script>
@@ -27,21 +28,33 @@
 
 <div class="left_menu_container" data-ng-controller="LeftMenuController">
     <div class="left_menu" data-ng-show="show">
-        <div class="autocomplete" data-auto-complete="commands">
-            <input type="text" placeholder="Commands" data-ng-model="query_items" data-ng-focus="open()" data-ng-blur="close()" tabindex="1" />
-            <div class="items" data-ng-show="show_items">
-                <ul>
-                    <li data-ng-repeat="command in filtered_items = (commands | filter:query_items)" ng-click="select($index)" data-ng-mouseover="on_mouse_over($event)" data-ng-mouseleave="on_mouse_leave($event)">{{ command.name }}</li>
-                </ul>
-            </div>
+        <div class="autocomplete" data-auto-complete data-items="commands" data-placeholder="Commands" data-tabindex="1" data-on-select="run_command" data-local-filter="true">
+            {{ item.name }}
         </div>
     </div>
     <div class="toggler_wrapper"><div class="toggler" data-ng-click="show=!show"></div></div>
 </div>
-<div class="content" data-ng-view></div>
+<div class="content">
+    <div class="header">
+        <div class="autocomplete" data-auto-complete data-items="search_results" data-on-search="search" data-placeholder="Global search" data-tabindex="2" data-on-select="select_item" data-width="700px" data-base-url="HOST">
+            <div style="display: table-cell;"><img src="http://{{ base_url }}:8080/image/{{ item.thumbnail | encode }}" width="50"></div>
+            <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
+                {{ item.title }}
+                <br />
+                <span data-ng-if="item.season">
+                    latest episode: {{ item.latest_season | leading_zero }}x{{ item.latest_episode | leading_zero }}
+                    Search for next on:
+                    <a href="http://torrentleech.org/torrents/browse/index/query/{{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrenleach</a>
+                    <a href="http://torrentz.eu/search?f={{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrentz</a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="view" data-ng-view></div>
+</div>
 
 <div class="movie_modal" data-modal-dialog data-show="$root.movie_details_show" data-width="1000px" data-height="700px" data-on-open="get_movie_details()" data-on-close="clean_movie_details()">
-    <div class="poster"><img data-ng-src="http://{{ HOST }}:8080/image/{{ movie_details.art.poster | encode }}" width="400"/></div>
+    <div class="poster"><img src="http://{{ HOST }}:8080/image/{{ movie_details.art.poster | encode }}" width="400"/></div>
     <div class="details">
         <div class="line title">{{ movie_details.title }}</div>
         <div class="line">
