@@ -65,6 +65,7 @@ angular.module('xbmc.services', [])
                     resolve_promise(data.id, data.result);
                 }
             }
+            // this is a message, no id attached. broadcast to all listeners
             else{
                 var method = data.method;
                 var i = 0;
@@ -197,11 +198,36 @@ angular.module('xbmc.services', [])
 
         return Service;
     }])
-    .factory('COMMANDS', ['VIDEO', function(VIDEO){
+    .factory('GUI', ['XBMC_API', function(XBMC_API){
+        var prefix = "GUI.";
+
+        var Service = {};
+        Service.prefix = prefix;
+
+        Service.fullscreen = function(){
+            return XBMC_API.sendRequest(prefix + "SetFullscreen", {fullscreen: false});
+        };
+
+        return Service;
+    }])
+    .factory('JSONRPC', ['XBMC_API', function(XBMC_API){
+        var prefix = "JSONRPC.";
+
+        var Service = {};
+        Service.prefix = prefix;
+
+        Service.getVersion = function(){
+            return XBMC_API.sendRequest(prefix + "Version");
+        };
+
+        return Service;
+    }])
+    .factory('COMMANDS', ['VIDEO', 'GUI', function(VIDEO, GUI){
         var Service = {};
         Service.commands = [
             {name: "Scan Video Library", func: VIDEO.scan},
-            {name: "Clean Video Library", func: VIDEO.clean}
+            {name: "Clean Video Library", func: VIDEO.clean},
+            {name: "Toggle Full Screen", func: GUI.fullscreen}
         ];
 
         return Service;
