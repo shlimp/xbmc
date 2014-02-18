@@ -1,0 +1,21 @@
+<div class="left_menu_container" data-ng-controller="LeftMenuController">
+    <div class="left_menu" data-ng-show="show_left_menu">
+        <div class="autocomplete" data-auto-complete data-items="commands" data-placeholder="Commands" data-tabindex="1" data-on-select="run_command" data-local-filter="true">
+            {{ item.name }}
+        </div>
+        <div class="left_menu_space"></div>
+        <a href="#!/" class="left_menu_item">
+            <div data-ng-show="selected_menu_item==''" class="selected">Home</div>
+            <div data-ng-show="selected_menu_item!=''">Home</div>
+        </a>
+        <a href="#!/movies" class="left_menu_item">
+            <div data-ng-show="selected_menu_item=='movies'" class="selected">Movies</div>
+            <div data-ng-show="selected_menu_item!='movies'">Movies</div>
+        </a>
+        <a href="#!/shows" class="left_menu_item">
+            <div data-ng-show="selected_menu_item=='shows'" class="selected">TV Shows</div>
+            <div data-ng-show="selected_menu_item!='shows'">TV Shows</div>
+        </a>
+    </div>
+    <div class="toggler_wrapper"><div class="toggler" data-ng-click="show_left_menu=!show_left_menu"></div></div>
+</div>

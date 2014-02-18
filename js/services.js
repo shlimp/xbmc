@@ -14,6 +14,12 @@ angular.module('xbmc.services', [])
             }
         }
     }])
+    .factory('General', [function(){
+        return {
+            left_menu_shown: true,
+            current_page: ""
+        }
+    }])
     .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'HOST', function ($q, $rootScope, $timeout,  HOST) {
         // We return this object to anything injecting our service
         var Service = {};
@@ -30,7 +36,6 @@ angular.module('xbmc.services', [])
         ws.onopen = function () {
 //            console.log("Socket has been opened!");
             socket_ready = true;
-            $rootScope.$broadcast('socket_ready', socket_ready);
         };
 
         ws.onmessage = function (message) {
@@ -38,6 +43,12 @@ angular.module('xbmc.services', [])
         };
 
         function sendRequest(request, notify) {
+            if(!socket_ready){
+                return $timeout(function(){
+                    return sendRequest(request, notify);
+                });
+                return false;
+            }
             var defer = $q.defer();
             var callbackId = getCallbackId();
             callbacks[callbackId] = {
@@ -55,7 +66,7 @@ angular.module('xbmc.services', [])
         }
 
         function listener(data) {
-            console.log("Received data from websocket: ", data);
+//            console.log("Received data from websocket: ", data);
             // If an object exists with callback_id in our callbacks object, resolve it
             if (callbacks.hasOwnProperty(data.id)) {
                 if(callbacks[data.id].notify){
@@ -141,6 +152,10 @@ angular.module('xbmc.services', [])
 
         Service.getRecentlyAddedMovies = function(){
             return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+        };
+
+        Service.getMovies = function(){
+            return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}});
         };
 
         Service.getRecentlyAddedEpisodes = function(){

@@ -1,0 +1,16 @@
+<div class="header" data-ng-controller="HeaderController">
+    <div class="autocomplete" data-auto-complete data-items="search_results" data-on-search="search" data-placeholder="Global search" data-tabindex="2" data-on-select="select_item" data-width="700px" data-base-url="HOST">
+        <div style="display: table-cell;"><img src="http://{{ base_url }}:8080/image/{{ item.thumbnail | encode }}" width="50"></div>
+        <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
+            {{ item.title }}
+            <br />
+            <span data-ng-if="item.season">
+                latest episode: {{ item.latest_season | leading_zero }}x{{ item.latest_episode | leading_zero }}
+                <br />
+                Search for next on:
+                <a href="http://torrentleech.org/torrents/browse/index/query/{{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrenleach</a>
+                <a href="http://torrentz.eu/search?f={{ item.title }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}" target="_blank">torrentz</a>
+            </span>
+        </div>
+    </div>
+</div>

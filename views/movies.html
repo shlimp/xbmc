@@ -1,1 +1,9 @@
-this is movies
+<div data-ng-controller="MoviesController">
+    <div class="items_list movies_list movies">
+        <div class="item {{ direction }}" data-ng-repeat="movie in movies" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
+                <div class="title">{{ movie.title }}</div>
+            </div>
+        </div>
+    </div>
+</div>

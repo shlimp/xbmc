@@ -2,7 +2,14 @@
 
 /* Controllers */
 angular.module('xbmc.controllers', [])
-    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", function($scope, $rootScope, VIDEO, HOST){
+
+    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", "General", function($scope, $rootScope, VIDEO, HOST, General){
+
+        $scope.content_style = {paddingLeft: "220px"};
+        $scope.$watch(function(){return General.left_menu_shown}, function(new_val){
+            $scope.content_style.paddingLeft = new_val == true? "220px": "20px";
+        });
+
         $scope.HOST = HOST;
         $scope.get_movie_details = function(){
             VIDEO.getMovieDetails($rootScope.movieid).then(function(data){
@@ -14,6 +21,13 @@ angular.module('xbmc.controllers', [])
             });
         };
 
+        $scope.clean_movie_details = function(){
+            $scope.movie_details = null;
+        }
+    }])
+
+    .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'VIDEO', 'HOST', function($scope, $rootScope, $timeout, VIDEO, HOST){
+        $scope.HOST = HOST;
         $scope.search_results = [];
 
         $scope.search = function(val){
@@ -38,20 +52,13 @@ angular.module('xbmc.controllers', [])
             if(item.movieid){
                 $rootScope.movieid = item.movieid;
                 $rootScope.movie_details_show = true;
-                $rootScope.$apply();
+                $timeout(function(){$rootScope.$apply()});
             }
         };
-
-        $scope.clean_movie_details = function(){
-            $scope.movie_details = null;
-        }
     }])
+
     .controller('HomeController', ["$scope", "VIDEO", "HOST", function($scope, VIDEO){
-        $scope.$on('socket_ready', function(e,val){
-            if (val){
-                getRecent();
-            }
-        });
+        getRecent();
 
         function getRecent(){
             VIDEO.getRecentlyAddedMovies().then(function(data){
@@ -70,16 +77,44 @@ angular.module('xbmc.controllers', [])
             getRecent();
         });
     }])
-    .controller('LeftMenuController', ["$scope", "COMMANDS", function($scope, COMMANDS){
-        $scope.show = true;
+
+    .controller('MoviesController', ["$scope", "VIDEO", "HOST", function($scope, VIDEO){
+        getMovies();
+
+        function getMovies(){
+            VIDEO.getMovies().then(function(data){
+                $scope.movies = data.movies;
+            })
+        }
+
+        $scope.$on(VIDEO.prefix + 'OnScanFinished', function(){
+            getMovies();
+        });
+
+        $scope.$on(VIDEO.prefix + 'OnCleanFinished', function(){
+            getMovies();
+        });
+    }])
+    .controller('LeftMenuController', ["$scope", "COMMANDS", "General", function($scope, COMMANDS, General){
+        $scope.show_left_menu = General.left_menu_shown;
+        $scope.selected_menu_item = General.current_page;
         $scope.commands = COMMANDS.commands;
 
         $scope.run_command = function(item){
             if (item.func){
                 item.func();
             }
-        }
+        };
+
+        $scope.$watch(function(){return General.current_page}, function(new_val){
+            $scope.selected_menu_item = new_val;
+        });
+
+        $scope.$watch('show_left_menu', function(new_val){
+            General.left_menu_shown = new_val;
+        })
     }])
+
     .controller('NotificationController', ["$scope", "$interval", "VIDEO", function($scope, $interval, VIDEO){
         $scope.notifications = [];
         function notification_listener(method){
