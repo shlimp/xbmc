@@ -3,10 +3,10 @@
 /* Controllers */
 angular.module('xbmc.controllers', [])
 
-    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", "General", "FILES", function($scope, $rootScope, VIDEO, HOST, General, FILES){
+    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", "GLOBALS", "FILES", function($scope, $rootScope, VIDEO, HOST, GLOBALS){
 
         $scope.content_style = {paddingLeft: "220px"};
-        $scope.$watch(function(){return General.left_menu_shown}, function(new_val){
+        $scope.$watch(function(){return GLOBALS.left_menu_shown}, function(new_val){
             $scope.content_style.paddingLeft = new_val == true? "220px": "20px";
         });
 
@@ -95,10 +95,10 @@ angular.module('xbmc.controllers', [])
             getMovies();
         });
     }])
-    .controller('LeftMenuController', ["$scope", "COMMANDS", "General", function($scope, COMMANDS, General){
-        $scope.show_left_menu = General.left_menu_shown;
-        $scope.selected_menu_item = General.current_page;
-        $scope.commands = COMMANDS.commands;
+    .controller('LeftMenuController', ["$scope", "GLOBALS", function($scope, GLOBALS){
+        $scope.show_left_menu = GLOBALS.left_menu_shown;
+        $scope.selected_menu_item = GLOBALS.current_page;
+        $scope.commands = GLOBALS.commands;
 
         $scope.run_command = function(item){
             if (item.func){
@@ -106,12 +106,12 @@ angular.module('xbmc.controllers', [])
             }
         };
 
-        $scope.$watch(function(){return General.current_page}, function(new_val){
+        $scope.$watch(function(){return GLOBALS.current_page}, function(new_val){
             $scope.selected_menu_item = new_val;
         });
 
         $scope.$watch('show_left_menu', function(new_val){
-            General.left_menu_shown = new_val;
+            GLOBALS.left_menu_shown = new_val;
         })
     }])
 

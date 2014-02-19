@@ -16,9 +16,9 @@ angular.module('xbmc')
                 });
         }
     ])
-    .run(['$rootScope', '$location', 'General', function($rootScope, $location, General){
+    .run(['$rootScope', '$location', 'GLOBALS', function($rootScope, $location, GLOBALS){
         $rootScope.$on("$routeChangeSuccess", function (event, next) {
-            General.current_page = next.originalPath.replace(/\//g, "");
+            GLOBALS.current_page = next.originalPath.replace(/\//g, "");
         });
     }]);
 

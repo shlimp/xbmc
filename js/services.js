@@ -11,13 +11,32 @@ angular.module('xbmc.services', ['ngResource'])
                         return arr[i];
                 }
                 return false;
+            },
+
+            find_index_in_array: function(arr, property, val){
+                for(var i = 0; i < arr.length; i++){
+                    if(arr[i][property] == val)
+                        return i;
+                }
+                return false;
             }
         }
     }])
-    .factory('General', [function(){
+    .factory('GLOBALS', ['VIDEO', 'GUI', function(VIDEO, GUI){
         return {
             left_menu_shown: true,
-            current_page: ""
+            current_page: "",
+            commands: [
+                {name: "Scan Video Library", func: VIDEO.scan},
+                {name: "Clean Video Library", func: VIDEO.clean},
+                {name: "Toggle Full Screen", func: GUI.fullscreen}
+            ],
+            movies_grouping: [
+                {name: "No Grouping", value: "none", selected: true},
+                {name: "Genre", value: "genre", selected: false},
+                {name: "Year", value: "year", selected: false},
+                {name: "Writer", value: "writer", selected: false}
+            ]
         }
     }])
     .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'HOST', function(XBMC_API, $resource, $q, HOST){
@@ -32,6 +51,7 @@ angular.module('xbmc.services', ['ngResource'])
             var defer = $q.defer();
             var data = {url: "http://" + HOST + ":8080/jsonrpc", request: request};
             Resource.post(data, function(data){
+                console.log("data received from http", data.result);
                 defer.resolve(data.result);
             });
             return defer.promise;
@@ -181,7 +201,7 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getMovies = function(){
-            return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}});
+            return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail", "genre", "year", "writer"], sort: {order: "descending", method: "dateadded"}});
         };
 
         Service.getRecentlyAddedEpisodes = function(){
@@ -239,14 +259,14 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('GUI', ['XBMC_API', function(XBMC_API){
+    .factory('GUI', ['XBMC_HTTP_API', function(XBMC_HTTP_API){
         var prefix = "GUI.";
 
         var Service = {};
         Service.prefix = prefix;
 
         Service.fullscreen = function(){
-            return XBMC_API.sendRequest(prefix + "SetFullscreen", {fullscreen: false});
+            return XBMC_HTTP_API.sendRequest(prefix + "SetFullscreen", {fullscreen: "toggle"});
         };
 
         return Service;
@@ -263,13 +283,3 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('COMMANDS', ['VIDEO', 'GUI', function(VIDEO, GUI){
-        var Service = {};
-        Service.commands = [
-            {name: "Scan Video Library", func: VIDEO.scan},
-            {name: "Clean Video Library", func: VIDEO.clean},
-            {name: "Toggle Full Screen", func: GUI.fullscreen}
-        ];
-
-        return Service;
-    }]);
