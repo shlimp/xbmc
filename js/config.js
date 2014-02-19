@@ -34,3 +34,9 @@ angular.module('xbmc').config(['$sceProvider',
         $sceProvider.enabled(false);
     }
 ]);
+
+angular.module('xbmc').config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    }
+]);

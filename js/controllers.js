@@ -3,7 +3,7 @@
 /* Controllers */
 angular.module('xbmc.controllers', [])
 
-    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", "General", function($scope, $rootScope, VIDEO, HOST, General){
+    .controller("MainController", ["$scope", "$rootScope", "VIDEO", "HOST", "General", "FILES", function($scope, $rootScope, VIDEO, HOST, General, FILES){
 
         $scope.content_style = {paddingLeft: "220px"};
         $scope.$watch(function(){return General.left_menu_shown}, function(new_val){

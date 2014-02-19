@@ -2,7 +2,7 @@
 
 /* Services */
 
-angular.module('xbmc.services', [])
+angular.module('xbmc.services', ['ngResource'])
     .factory('Helpers', [function(){
         return {
             find_in_array: function(arr, property, val){
@@ -19,6 +19,30 @@ angular.module('xbmc.services', [])
             left_menu_shown: true,
             current_page: ""
         }
+    }])
+    .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'HOST', function(XBMC_API, $resource, $q, HOST){
+        var Service = {};
+        var Resource = $resource('jsonrpc.php', {}, {
+            post: {method: 'POST', params: {}, isArray: false}
+        });
+
+        function sendRequest(request){
+            var callbackId = XBMC_API.getCallbackId();
+            request.id = callbackId;
+            var defer = $q.defer();
+            var data = {url: "http://" + HOST + ":8080/jsonrpc", request: request};
+            Resource.post(data, function(data){
+                defer.resolve(data.result);
+            });
+            return defer.promise;
+        }
+
+        Service.sendRequest = function(method, params){
+            var request = {"jsonrpc": "2.0", "method": method, "params": params};
+            return sendRequest(request);
+        };
+
+        return Service;
     }])
     .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'HOST', function ($q, $rootScope, $timeout,  HOST) {
         // We return this object to anything injecting our service
@@ -57,7 +81,7 @@ angular.module('xbmc.services', [])
                 notify: notify
             };
             request.id = callbackId;
-//            console.log('Sending request ' + callbackId);
+            console.log('Sending request', request);
             ws.send(JSON.stringify(request));
             if(notify)
                 return {promise: defer.promise, id: callbackId};
@@ -66,7 +90,7 @@ angular.module('xbmc.services', [])
         }
 
         function listener(data) {
-//            console.log("Received data from websocket: ", data);
+            console.log("Received data from websocket: ", data);
             // If an object exists with callback_id in our callbacks object, resolve it
             if (callbacks.hasOwnProperty(data.id)) {
                 if(callbacks[data.id].notify){
@@ -135,6 +159,8 @@ angular.module('xbmc.services', [])
             registerListener(method, func);
         };
 
+        Service.getCallbackId = getCallbackId;
+
         Service.resolve_promise = resolve_promise;
 
         return Service;
@@ -151,7 +177,7 @@ angular.module('xbmc.services', [])
         };
 
         Service.getRecentlyAddedMovies = function(){
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail", "file"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
         };
 
         Service.getMovies = function(){
@@ -163,7 +189,7 @@ angular.module('xbmc.services', [])
         };
 
         Service.getMovieDetails = function(movie_id){
-            return XBMC_API.sendRequest(prefix + "GetMovieDetails", {movieid: movie_id, properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer"]});
+            return XBMC_API.sendRequest(prefix + "GetMovieDetails", {movieid: movie_id, properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer", "file"]});
         };
 
         Service.searchMovies = function(val){
@@ -225,14 +251,14 @@ angular.module('xbmc.services', [])
 
         return Service;
     }])
-    .factory('JSONRPC', ['XBMC_API', function(XBMC_API){
-        var prefix = "JSONRPC.";
+    .factory('FILES', ['XBMC_HTTP_API', function(XBMC_HTTP_API){
+        var prefix = "Files.";
 
         var Service = {};
         Service.prefix = prefix;
 
-        Service.getVersion = function(){
-            return XBMC_API.sendRequest(prefix + "Version");
+        Service.prepareDownload = function(path){
+            return XBMC_HTTP_API.sendRequest(prefix + "PrepareDownload", {path: path});
         };
 
         return Service;
