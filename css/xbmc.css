@@ -82,7 +82,7 @@ autocomplete
     z-index: 999;
     background-color: #ffffff;
     text-align: center;
-    max-height: 70%;
+    max-height: 500px;
     overflow-y: auto;
 }
 
