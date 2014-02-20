@@ -34,8 +34,8 @@
         <div class="view" data-ng-view></div>
     </div>
 
-    <div class="movie_modal" data-modal-dialog data-show="$root.movie_details_show" data-width="1000px" data-height="700px" data-on-open="get_movie_details()" data-on-close="clean_movie_details()">
-        <div class="poster"><img src="http://{{ HOST }}:8080/image/{{ movie_details.art.poster | encode }}" width="400"/></div>
+    <div class="movie_modal" data-modal-dialog data-show="$root.movie_details_show" data-height="90%" data-width="80%" data-on-open="get_movie_details()" data-on-close="clean_movie_details()">
+        <div class="poster"><img src="http://{{ HOST }}:8080/image/{{ movie_details.art.poster | encode }}" width="350"/></div>
         <div class="details">
             <div class="line title">{{ movie_details.title }}</div>
             <div class="line">
