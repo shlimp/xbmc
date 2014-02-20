@@ -275,8 +275,8 @@ div.items_list .item.ng-enter, div.items_list .item.ng-leave {
 }
 
 div.items_list .item.ng-enter {
-    transform: scale(1.2);
-    -webkit-transform: scale(1.2);
+    transform: scale(0);
+    -webkit-transform: scale(0);
 }
 
 div.items_list .item.ng-enter.ng-enter-active {
@@ -308,17 +308,23 @@ div.items_list .item .image .title {
     font-size: 12px;
 }
 
-div.items_list.movies .item .image {
+div.items_list .item .image {
     width: 150px;
     height: 225px;
     background-size: 150px 225px;
 }
 
-div.items_list.shows .item .image {
-    width: 150px;
-    height: 84px;
-    background-size: 150px 84px;
-}
+/*div.items_list.movies .item .image {*/
+    /*width: 150px;*/
+    /*height: 225px;*/
+    /*background-size: 150px 225px;*/
+/*}*/
+
+/*div.items_list.shows .item .image {*/
+    /*width: 150px;*/
+    /*height: 84px;*/
+    /*background-size: 150px 84px;*/
+/*}*/
 
 /*
 movie modal

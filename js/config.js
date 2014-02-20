@@ -11,6 +11,9 @@ angular.module('xbmc')
                 when('/movies/', {
                     templateUrl: 'views/movies.html'
                 }).
+                when('/shows/', {
+                    templateUrl: 'views/shows.html'
+                }).
                 otherwise({
                     redirectTo: '/'
                 });

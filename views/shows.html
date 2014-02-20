@@ -1,0 +1,9 @@
+<div data-ng-controller="TVShowsController">
+    <div class="items_list movies_list">
+        <div class="item" data-ng-repeat="show in shows">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')">
+                <div class="title">{{ show.title }}</div>
+            </div>
+        </div>
+    </div>
+</div>

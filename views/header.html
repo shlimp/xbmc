@@ -1,6 +1,9 @@
 <div class="header" data-ng-controller="HeaderController">
     <div class="autocomplete" data-auto-complete data-items="search_results" data-on-search="search" data-placeholder="Global search" data-tabindex="2" data-on-select="select_item" data-width="700px" data-base-url="HOST">
-        <div style="display: table-cell;"><img src="http://{{ base_url }}:8080/image/{{ item.thumbnail | encode }}" width="50"></div>
+        <div style="display: table-cell;">
+            <img data-ng-if="item.art.poster" src="http://{{ base_url }}:8080/image/{{ item.art.poster | encode }}" width="50">
+            <img data-ng-if="item.art['tvshow.poster']" src="http://{{ base_url }}:8080/image/{{ item.art['tvshow.poster'] | encode }}" width="50">
+        </div>
         <div style="display: table-cell; vertical-align: top; padding-left: 10px;">
             {{ item.title }}
             <br />

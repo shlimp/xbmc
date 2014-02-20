@@ -95,6 +95,25 @@ angular.module('xbmc.controllers', [])
             getMovies();
         });
     }])
+
+    .controller('TVShowsController', ["$scope", "VIDEO", "HOST", function($scope, VIDEO){
+        getTvShows();
+
+        function getTvShows(){
+            VIDEO.getShows().then(function(data){
+                $scope.shows = data.tvshows;
+            })
+        }
+
+        $scope.$on(VIDEO.prefix + 'OnScanFinished', function(){
+            getTvShows();
+        });
+
+        $scope.$on(VIDEO.prefix + 'OnCleanFinished', function(){
+            getTvShows();
+        });
+    }])
+
     .controller('LeftMenuController', ["$scope", "GLOBALS", function($scope, GLOBALS){
         $scope.show_left_menu = GLOBALS.left_menu_shown;
         $scope.selected_menu_item = GLOBALS.current_page;

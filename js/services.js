@@ -197,15 +197,19 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getRecentlyAddedMovies = function(){
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail", "file"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail", "file", "art"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+        };
+
+        Service.getRecentlyAddedEpisodes = function(){
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle", "art"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
         };
 
         Service.getMovies = function(){
             return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail", "genre", "year", "writer"], sort: {order: "descending", method: "dateadded"}});
         };
 
-        Service.getRecentlyAddedEpisodes = function(){
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+        Service.getShows = function(){
+            return XBMC_API.sendRequest(prefix + "GetTVShows", {properties: ["title", "thumbnail", "genre", "art"], sort: {order: "descending", method: "dateadded"}});
         };
 
         Service.getMovieDetails = function(movie_id){
@@ -213,11 +217,11 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.searchMovies = function(val){
-            return XBMC_API.sendRequest(prefix + "GetMovies", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating"], sort: {order: "ascending", method: "label"}});
+            return XBMC_API.sendRequest(prefix + "GetMovies", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "art"], sort: {order: "ascending", method: "label"}});
         };
 
         Service.searchTVShows = function(val){
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season"], sort: {order: "ascending", method: "label"}}, true);
+            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season", "art"], sort: {order: "ascending", method: "label"}}, true);
             return promise.promise.then(
                 null,
                 null,
