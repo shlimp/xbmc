@@ -1,8 +1,19 @@
 <div data-ng-controller="TVShowsController">
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="show in shows">
-            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')">
-                <div class="title">{{ show.title }}</div>
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')" data-ng-mouseover="show_mouse_over=show.tvshowid"  data-ng-mouseleave="show_mouse_over=null">
+                <div class="title">
+                    {{ show.title }}
+                    <div class="show_over" data-ng-show="show_mouse_over==show.tvshowid">
+                        <br /><br />
+                        latest episode: {{ show.latest_season | leading_zero }}x{{ show.latest_episode | leading_zero }}
+                        <br />
+                        Search for next on:
+                        <a href="http://torrentleech.org/torrents/browse/index/query/{{ show.title }} s{{ show.latest_season | leading_zero }}e{{ show.latest_episode+1 | leading_zero }}" target="_blank">torrenleach</a>
+                        <a href="http://torrentz.eu/search?f={{ show.title }} s{{ show.latest_season | leading_zero }}e{{ show.latest_episode+1 | leading_zero }}" target="_blank">torrentz</a>
+                        <a href="http://www.subtitle.co.il/browse.php?q={{ show.title }}" target="_blank">Subtitles</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

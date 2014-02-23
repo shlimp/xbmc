@@ -302,7 +302,7 @@ div.items_list .item .image:hover{
 
 div.items_list .item .image .title {
     padding: 10px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     color: #FFFFFF;
     font-weight: bold;
     font-size: 12px;
@@ -312,6 +312,28 @@ div.items_list .item .image {
     width: 150px;
     height: 225px;
     background-size: 150px 225px;
+}
+
+div.items_list .item .image a{
+    color: #ffffff;
+}
+
+div.items_list .item .image .show_over{
+    max-height: 100px;
+    /*line-height: 15px;*/
+    transition: all 0.2s linear;
+    overflow: hidden;
+}
+
+div.items_list .item .image .show_over.ng-hide-add, div.items_list .item .image .show_over.ng-hide-remove {
+    display: block !important;
+    max-height: 100px;
+    /*line-height: 15px;*/
+}
+
+div.items_list .item .image .show_over.ng-hide {
+    max-height: 0;
+    /*line-height: 0;*/
 }
 
 /*div.items_list.movies .item .image {*/
