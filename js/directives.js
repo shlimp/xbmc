@@ -3,7 +3,7 @@
 angular.module('xbmc.directives', [])
     .directive('myTransclude', function () {
         return {
-            link: function (scope, element, attr) {
+            link: function (scope, element, /*Angular.Attributes*/attr) {
                 var transclude = scope.$eval(attr.myTransclude);
                 transclude(scope, function (dom) {
                     element.append(dom);
@@ -23,7 +23,7 @@ angular.module('xbmc.directives', [])
             transclude: true,
             templateUrl: 'views/autocomplete.html',
             compile: function () {
-                return function (scope, el, attrs, controllers, transclude) {
+                return function (scope, el, attrs, controllers, /*Angular.Attributes*/transclude) {
                     scope.transcludeFn = transclude;
                     scope.show_items = false;
                     scope.mouse_over = false;
@@ -31,6 +31,7 @@ angular.module('xbmc.directives', [])
                     scope.placeholder = attrs.placeholder;
                     scope.tabindex = attrs.tabindex || 0;
                     scope.local_filter = scope.$eval(attrs.localFilter) || false;
+                    scope.filtered_items = scope.items;
 
                     scope.widget_style = {};
 
@@ -164,7 +165,7 @@ angular.module('xbmc.directives', [])
                 item: "="
             },
             templateUrl: "views/links.html",
-            link: function (scope, element, attrs){
+            link: function (scope, element){
                 var links = SETTINGS.link_patterns;
                 var el = null;
                 var tpl = "";

@@ -13,7 +13,7 @@ angular.module('xbmc.controllers', [])
 
         $scope.HOST = SETTINGS.HOST;
         $scope.get_movie_details = function(){
-            Video.getMovieDetails($rootScope.movieid).then(function(data){
+            Video.getMovieDetails($rootScope.movieid).then(function(/*Video.MovieDetails*/data){
                 if (data.moviedetails.trailer.substring(0, data.moviedetails.trailer.indexOf("?")) == 'plugin://plugin.video.youtube/') {
                     var trailer_id = data.moviedetails.trailer.substr(data.moviedetails.trailer.lastIndexOf("=") + 1);
                     data.moviedetails.trailer_url = "http://www.youtube.com/embed/" + trailer_id;
@@ -26,10 +26,10 @@ angular.module('xbmc.controllers', [])
             $scope.movie_details = null;
         };
 
-        Video.getShows().then(function(data){
+        Video.getShows().then(function(/*Video.TvShows*/data){
             if (data.tvshows) {
                 for (var i = 0; i < data.tvshows.length; i++) {
-                    Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(episodeguide){
+                    Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
                         var show = Helpers.find_in_array(data.tvshows, "tvshowid", episodeguide.tvshowid);
                         if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
                             Globals.notifications.push(show.title);
@@ -51,11 +51,11 @@ angular.module('xbmc.controllers', [])
                 return false;
             }
             var results = [];
-            Video.searchMovies(val).then(function(data){
+            Video.searchMovies(val).then(function(/*Video.Movies*/data){
                 if(data.movies)
                     results = results.concat(data.movies);
                 return Video.searchTVShows(val);
-            }).then(function(data){
+            }).then(function(/*Video.TvShows*/data){
                 if(data.tvshows)
                     results = results.concat(data.tvshows);
                 $scope.search_results = results;
@@ -76,10 +76,10 @@ angular.module('xbmc.controllers', [])
         getRecent();
 
         function getRecent(){
-            Video.getRecentlyAddedMovies().then(function(data){
+            Video.getRecentlyAddedMovies().then(function(/*Video.Movies*/data){
                 $scope.recent_movies = data.movies;
             });
-            Video.getRecentlyAddedEpisodes().then(function(data){
+            Video.getRecentlyAddedEpisodes().then(function(/*Video.Episodes*/data){
                 $scope.recent_episodes = data.episodes;
             });
         }
@@ -97,7 +97,7 @@ angular.module('xbmc.controllers', [])
         getMovies();
 
         function getMovies(){
-            Video.getMovies().then(function(data){
+            Video.getMovies().then(function(/*Video.Movies*/data){
                 $scope.movies = data.movies;
             })
         }
@@ -115,7 +115,7 @@ angular.module('xbmc.controllers', [])
         getTvShows();
 
         function getTvShows(){
-            Video.getShows().then(function(data){
+            Video.getShows().then(function(/*Video.TvShows*/data){
                 $scope.shows = data.tvshows;
             })
         }

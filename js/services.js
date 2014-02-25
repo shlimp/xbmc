@@ -3,6 +3,7 @@
 /* Services */
 
 angular.module('xbmc.services', ['ngResource'])
+
     .factory('Helpers', [function () {
         return {
             find_in_array: function (arr, property, val) {
@@ -47,7 +48,7 @@ angular.module('xbmc.services', ['ngResource'])
                                 obj[nodeName] = [];
                                 obj[nodeName].push(old);
                             }
-                            obj[nodeName].push(xmlToJson(item));
+                            obj[nodeName].push(this.xml_to_json(item));
                         }
                     }
                 }
@@ -55,6 +56,7 @@ angular.module('xbmc.services', ['ngResource'])
             }
         }
     }])
+
     .factory('Globals', ['Video', function (Video) {
         return {
             left_menu_shown: true,
@@ -72,6 +74,7 @@ angular.module('xbmc.services', ['ngResource'])
             notifications: []
         }
     }])
+
     .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'SETTINGS', function (XBMC_API, $resource, $q, SETTINGS) {
         var Service = {};
         var Resource = $resource('jsonrpc.php', {}, {
@@ -96,6 +99,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
+
     .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', function (XBMC_API, $resource, $q) {
         var Service = {};
         var Resource = $resource('jsonrpc.php', {}, {
@@ -119,11 +123,12 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
+
     .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'SETTINGS', function ($q, $rootScope, $timeout, SETTINGS) {
         // We return this object to anything injecting our service
         var Service = {};
         // Keep all pending requests here until they get responses
-        var callbacks = {};
+        /*Services.Callbacks*/var callbacks = {};
         // Create a unique callback ID to map requests to responses
         var currentCallbackId = 0;
         // Create our websocket object with the address to the websocket
@@ -245,6 +250,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
+
     .factory('Video', ['XBMC_API', 'LOCAL_API', 'Helpers', '$interval', function (XBMC_API, LOCAL_API, Helpers, $interval) {
         var prefix = "VideoLibrary.";
 
@@ -257,15 +263,26 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getRecentlyAddedMovies = function () {
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {properties: ["title", "thumbnail", "file", "art"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedMovies", {
+                properties: ["title", "thumbnail", "file", "art"],
+                sort: {order: "descending", method: "dateadded"},
+                limits: {start: 0, end: 5}
+            });
         };
 
         Service.getRecentlyAddedEpisodes = function () {
-            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {properties: ["title", "thumbnail", "season", "episode", "showtitle", "art"], sort: {order: "descending", method: "dateadded"}, limits: {start: 0, end: 5}});
+            return XBMC_API.sendRequest(prefix + "GetRecentlyAddedEpisodes", {
+                properties: ["title", "thumbnail", "season", "episode", "showtitle", "art"],
+                sort: {order: "descending", method: "dateadded"},
+                limits: {start: 0, end: 5}
+            });
         };
 
         Service.getMovies = function () {
-            return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail", "genre", "year", "writer"], sort: {order: "descending", method: "dateadded"}});
+            return XBMC_API.sendRequest(prefix + "GetMovies", {
+                properties: ["title", "thumbnail", "genre", "year", "writer"],
+                sort: {order: "descending", method: "dateadded"}
+            });
         };
 
         Service.getLastAired = function (tvshowid, zip_url) {
@@ -273,18 +290,21 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getShows = function () {
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {properties: ["title", "thumbnail", "genre", "art", "episodeguide"], sort: {order: "descending", method: "dateadded"}}, true);
+            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
+                properties: ["title", "thumbnail", "genre", "art", "episodeguide"],
+                sort: {order: "descending", method: "dateadded"}
+            }, true);
             return promise.promise.then(
                 null,
                 null,
-                function (data) {
+                function (/*Video.TvShows*/data) {
                     var resolved = 0;
                     var i = 0;
                     if (data.tvshows) {
                         var interval = $interval(function () {
                             var item = data.tvshows[i];
                             XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: item.tvshowid, properties: ["tvshowid", "season", "episode"]}).then(
-                                function (season_data) {
+                                function (/*Video.Seasons*/season_data) {
                                     var show = Helpers.find_in_array(data.tvshows, "tvshowid", season_data.seasons[season_data.seasons.length - 1].tvshowid);
                                     show.latest_season = season_data.seasons[season_data.seasons.length - 1].season;
                                     show.latest_episode = season_data.seasons[season_data.seasons.length - 1].episode;
@@ -306,15 +326,25 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getMovieDetails = function (movie_id) {
-            return XBMC_API.sendRequest(prefix + "GetMovieDetails", {movieid: movie_id, properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer", "file"]});
+            return XBMC_API.sendRequest(prefix + "GetMovieDetails", {
+                movieid: movie_id,
+                properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer", "file"]
+            });
         };
 
         Service.searchMovies = function (val) {
-            return XBMC_API.sendRequest(prefix + "GetMovies", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "art"], sort: {order: "ascending", method: "label"}});
+            return XBMC_API.sendRequest(prefix + "GetMovies", {
+                filter: {field: "title", operator: "contains", value: val},
+                properties: ["title", "thumbnail", "rating", "art"],
+                sort: {order: "ascending", method: "label"}
+            });
         };
 
         Service.searchTVShows = function (val) {
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {filter: {field: "title", operator: "contains", value: val}, properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season", "art"], sort: {order: "ascending", method: "label"}}, true);
+            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
+                filter: {field: "title", operator: "contains", value: val},
+                properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season", "art"],
+                sort: {order: "ascending", method: "label"}}, true);
             return promise.promise.then(
                 null,
                 null,
@@ -324,7 +354,10 @@ angular.module('xbmc.services', ['ngResource'])
                     if (data.tvshows) {
                         var interval = $interval(function () {
                             var item = data.tvshows[i];
-                            XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: item.tvshowid, properties: ["tvshowid", "season", "episode"]}).then(
+                            XBMC_API.sendRequest(prefix + "GetSeasons", {
+                                tvshowid: item.tvshowid,
+                                properties: ["tvshowid", "season", "episode"]
+                            }).then(
                                 function (season_data) {
                                     var show = Helpers.find_in_array(data.tvshows, "tvshowid", season_data.seasons[season_data.seasons.length - 1].tvshowid);
                                     show.latest_season = season_data.seasons[season_data.seasons.length - 1].season;
@@ -356,6 +389,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
+
     .factory('Gui', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
         var prefix = "GUI.";
 
@@ -368,6 +402,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
+
     .factory('Files', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
         var prefix = "Files.";
 

@@ -20,7 +20,7 @@ angular.module('xbmc')
         }
     ])
     .run(['$rootScope', '$location', 'Globals', function($rootScope, $location, Globals){
-        $rootScope.$on("$routeChangeSuccess", function (event, next) {
+        $rootScope.$on("$routeChangeSuccess", function (event, /*Angular.Route*/next) {
             Globals.current_page = next.originalPath.replace(/\//g, "");
         });
     }]);
