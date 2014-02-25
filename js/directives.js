@@ -174,7 +174,7 @@ angular.module('xbmc.directives', [])
                 var el = null;
                 var tpl = "";
                 for (var i = 0; i < links.length; i++) {
-                    tpl = '<a href="' + links[i].url + '">' + links[i].name + '</a>';
+                    tpl = '<a href="' + links[i].url + '" target="_blank">' + links[i].name + '</a>';
                     el = $compile(tpl)(scope);
                     element.find('div').append(el);
                 }
