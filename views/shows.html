@@ -1,14 +1,16 @@
 <div data-ng-controller="TVShowsController">
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="show in shows">
-            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')" data-ng-mouseover="show_mouse_over=show.tvshowid"  data-ng-mouseleave="show_mouse_over=null">
+            <div class="image {{ show.has_new_episode_class }}" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')" data-ng-mouseover="show_mouse_over=show.tvshowid"  data-ng-mouseleave="show_mouse_over=null">
                 <div class="title">
                     {{ show.title }}
                     <div class="show_over" data-ng-show="show_mouse_over==show.tvshowid">
                         <br />
                         latest episode: {{ show.latest_season | leading_zero }}x{{ show.latest_episode | leading_zero }}
                         <br />
-                        <div data-links data-item="show"></div>
+                        <div data-ng-show="show.has_new_episode">
+                            <div data-links data-item="show"></div>
+                        </div>
                     </div>
                 </div>
             </div>

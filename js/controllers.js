@@ -3,8 +3,7 @@
 /* Controllers */
 angular.module('xbmc.controllers', [])
 
-    .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", "Helpers", function($scope, $rootScope, Video, SETTINGS, Globals, Helpers){
-        console.log(SETTINGS);
+    .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", function($scope, $rootScope, Video, SETTINGS, Globals){
 
         $scope.content_style = {paddingLeft: "220px"};
         $scope.$watch(function(){return Globals.left_menu_shown}, function(new_val){
@@ -26,22 +25,8 @@ angular.module('xbmc.controllers', [])
             $scope.movie_details = null;
         };
 
-        Video.getShows().then(function(/*Video.TvShows*/data){
-            if (data.tvshows) {
-                for (var i = 0; i < data.tvshows.length; i++) {
-                    Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
-                        var show = Helpers.find_in_array(data.tvshows, "tvshowid", episodeguide.tvshowid);
-                        if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
-                            Globals.notifications.push({
-                                obj: show, obj_name: "show",
-                                persistant: true,
-                                template: '<div>There is a new Episode for {{ show.title }} <div data-links data-item="show"></div></div>'
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        Globals.searchNewEpisodes();
+
     }])
 
     .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', function($scope, $rootScope, $timeout, Video, SETTINGS){
@@ -115,7 +100,7 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('TVShowsController', ["$scope", "Video", function($scope, Video){
+    .controller('TVShowsController', ["$scope", "Video", "Globals", "Helpers", function($scope, Video, Globals, Helpers){
         getTvShows();
 
         function getTvShows(){
@@ -123,6 +108,20 @@ angular.module('xbmc.controllers', [])
                 $scope.shows = data.tvshows;
             })
         }
+
+        $scope.$watch("shows", function(shows){
+            if (shows) {
+                for (var i = 0; i < shows.length; i++) {
+                    Video.getLastAired(shows[i].tvshowid, Helpers.xml_to_json(shows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
+                        var show = Helpers.find_in_array(shows, "tvshowid", episodeguide.tvshowid);
+                        if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
+                            show.has_new_episode = true;
+                            show.has_new_episode_class = "has_new";
+                        }
+                    });
+                }
+            }
+        });
 
         $scope.$on(Video.prefix + 'OnScanFinished', function(){
             getTvShows();

@@ -184,10 +184,9 @@ angular.module('xbmc.directives', [])
 
     .directive('notifications', ["$interval", "Video", "Globals", "$compile", "Helpers", "$timeout", function ($interval, Video, Globals, $compile, Helpers, $timeout) {
         return {
-            link: function (scope, element) {
+            link: function (scope) {
                 scope.notifications = [];
                 function notification_listener(method) {
-                    console.log("a")
                     var msg = "";
                     switch (method.replace(Video.prefix, "")) {
                         case "OnScanStarted":

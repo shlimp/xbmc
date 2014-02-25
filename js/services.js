@@ -57,13 +57,14 @@ angular.module('xbmc.services', ['ngResource'])
         }
     }])
 
-    .factory('Globals', ['Video', function (Video) {
-        return {
+    .factory('Globals', ['Video', 'Helpers', function (Video, Helpers) {
+        var Service = {
             left_menu_shown: true,
             current_page: "",
             commands: [
                 {name: "Scan Video Library", func: Video.scan},
-                {name: "Clean Video Library", func: Video.clean}
+                {name: "Clean Video Library", func: Video.clean},
+                {name: "Search new Episodes", func: searchNewEpisodes}
             ],
             movies_grouping: [
                 {name: "No Grouping", value: "none", selected: true},
@@ -71,8 +72,30 @@ angular.module('xbmc.services', ['ngResource'])
                 {name: "Year", value: "year", selected: false},
                 {name: "Writer", value: "writer", selected: false}
             ],
-            notifications: []
+            notifications: [],
+            searchNewEpisodes: searchNewEpisodes
+        };
+
+        function searchNewEpisodes(){
+            Video.getShows().then(function(/*Video.TvShows*/data){
+                if (data.tvshows) {
+                    for (var i = 0; i < data.tvshows.length; i++) {
+                        Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
+                            var show = Helpers.find_in_array(data.tvshows, "tvshowid", episodeguide.tvshowid);
+                            if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
+                                Service.notifications.push({
+                                    obj: show, obj_name: "show",
+                                    persistant: true,
+                                    template: '<div>There is a new Episode for {{ show.title }} <div data-links data-item="show"></div></div>'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
         }
+
+        return Service;
     }])
 
     .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'SETTINGS', function (XBMC_API, $resource, $q, SETTINGS) {

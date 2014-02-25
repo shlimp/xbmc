@@ -319,6 +319,16 @@ div.items_list .item .image {
     -webkit-transition: box-shadow 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
 }
 
+div.items_list .item .image.has_new{
+    box-shadow: 0 0 5px 2px green;
+}
+
+div.items_list .item .image.has_new:hover{
+    box-shadow: 4px 4px 4px green;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+}
+
 div.items_list .item .image:hover{
     box-shadow: 4px 4px 4px #000;
     transform: scale(1.2);
