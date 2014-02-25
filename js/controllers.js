@@ -32,7 +32,11 @@ angular.module('xbmc.controllers', [])
                     Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
                         var show = Helpers.find_in_array(data.tvshows, "tvshowid", episodeguide.tvshowid);
                         if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
-                            Globals.notifications.push(show.title);
+                            Globals.notifications.push({
+                                obj: show, obj_name: "show",
+                                persistant: true,
+                                template: '<div>There is a new Episode for {{ show.title }} <div data-links data-item="show"></div></div>'
+                            });
                         }
                     });
                 }
@@ -147,50 +151,4 @@ angular.module('xbmc.controllers', [])
         $scope.$watch('show_left_menu', function(new_val){
             Globals.left_menu_shown = new_val;
         })
-    }])
-
-    .controller('NotificationController', ["$scope", "$interval", "Video", "Globals", "Helpers", function($scope, $interval, Video, Globals, Helpers){
-        $scope.notifications = [];
-        function notification_listener(method){
-            var msg = "";
-            switch(method.replace(Video.prefix, "")){
-                case "OnScanStarted":
-                    msg = "Started Scan";
-                    break;
-                case "OnScanFinished":
-                    msg = "Finish Scan";
-                    break;
-                case "OnCleanStarted":
-                    msg = "Started Clean";
-                    break;
-                case "OnCleanFinished":
-                    msg = "Finish Clean";
-                    break;
-            }
-            if(msg){
-                $scope.notifications.push({msg: msg, time: new Date().getTime()});
-                $scope.$apply();
-            }
-        }
-
-        $interval(function(){
-            var time = new Date().getTime()-5000;
-            for(var i = 0; i < $scope.notifications.length; i++){
-                if($scope.notifications[i].time < time){
-                    $scope.notifications.splice(i, 1);
-                    i--;
-                }
-            }
-        }, 10000);
-
-        $scope.$watchCollection(function(){return Globals.notifications}, function(new_val){
-            for(var i = 0; i < new_val.length; i++){
-                if(!Helpers.find_in_array($scope.notifications, "msg", new_val[i])){
-                    $scope.notifications.push({msg: new_val[i], time: new Date().getTime()});
-                    delete Globals.notifications[i];
-                }
-            }
-        });
-
-        Video.registerListener(null, notification_listener);
     }]);

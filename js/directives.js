@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('xbmc.directives', [])
+
     .directive('myTransclude', function () {
         return {
             link: function (scope, element, /*Angular.Attributes*/attr) {
@@ -11,6 +12,7 @@ angular.module('xbmc.directives', [])
             }
         }
     })
+
     .directive('autoComplete', function () {
         return{
             scope: {
@@ -68,7 +70,7 @@ angular.module('xbmc.directives', [])
                         var items = scope.filtered_items || scope.items;
                         scope.mouse_over = false;
                         el.find("input")[0].blur();
-                        if(scope.select_func)
+                        if (scope.select_func)
                             scope.select_func(items[idx]);
                     }
 
@@ -100,12 +102,12 @@ angular.module('xbmc.directives', [])
                         scope.current_item = -1;
                     };
 
-                    function search(val){
-                        if(scope.search_func)
+                    function search(val) {
+                        if (scope.search_func)
                             scope.search_func(val);
                     }
 
-                    scope.$watch('query_items', function(new_val){
+                    scope.$watch('query_items', function (new_val) {
                         search(new_val);
                     });
 
@@ -128,6 +130,7 @@ angular.module('xbmc.directives', [])
             }
         }
     })
+
     .directive('modalDialog', function () {
         return {
             scope: {
@@ -159,21 +162,83 @@ angular.module('xbmc.directives', [])
             }
         };
     })
-    .directive('links', ['SETTINGS', '$compile', function(SETTINGS, $compile){
+
+    .directive('links', ['SETTINGS', '$compile', function (SETTINGS, $compile) {
         return {
             scope: {
                 item: "="
             },
             templateUrl: "views/links.html",
-            link: function (scope, element){
+            link: function (scope, element) {
                 var links = SETTINGS.link_patterns;
                 var el = null;
                 var tpl = "";
-                for(var i = 0; i < links.length; i++){
-                    tpl = '<a href="'+links[i].url+'">'+links[i].name+'</a>';
-                    el = $compile( tpl )( scope );
+                for (var i = 0; i < links.length; i++) {
+                    tpl = '<a href="' + links[i].url + '">' + links[i].name + '</a>';
+                    el = $compile(tpl)(scope);
                     element.find('div').append(el);
                 }
+            }
+        };
+    }])
+
+    .directive('notifications', ["$interval", "Video", "Globals", "$compile", "Helpers", "$timeout", function ($interval, Video, Globals, $compile, Helpers, $timeout) {
+        return {
+            link: function (scope, element) {
+                scope.notifications = [];
+                function notification_listener(method) {
+                    console.log("a")
+                    var msg = "";
+                    switch (method.replace(Video.prefix, "")) {
+                        case "OnScanStarted":
+                            msg = "Started Scan";
+                            break;
+                        case "OnScanFinished":
+                            msg = "Finish Scan";
+                            break;
+                        case "OnCleanStarted":
+                            msg = "Started Clean";
+                            break;
+                        case "OnCleanFinished":
+                            msg = "Finish Clean";
+                            break;
+                    }
+                    if (msg) {
+                        scope.notifications.push({msg: msg, time: new Date().getTime()});
+                        scope.$apply();
+                    }
+                }
+
+                $interval(function () {
+                    var time = new Date().getTime() - 10000;
+                    for (var i = 0; i < scope.notifications.length; i++) {
+                        if (scope.notifications[i].time < time) {
+                            scope.notifications.splice(i, 1);
+                            i--;
+                        }
+                    }
+                }, 10000);
+
+                scope.dismiss = function(){
+                    scope.notifications = [];
+                    Globals.notifications = [];
+                };
+
+                scope.$watchCollection(function () {return Globals.notifications}, function (new_val) {
+                    var el = null;
+                    for (var i = 0; i < new_val.length-1; i++) {
+                        var template = new_val[i].template;
+                        scope[new_val[i].obj_name] = new_val[i].obj;
+                        el = $compile(template)(scope);
+                        $timeout(function(){
+                            if (!Helpers.find_in_array(scope.notifications, "msg", el.html())) {
+                                scope.notifications.push({msg: el.html(), time: new Date().getTime()+1000000});
+                            }
+                        });
+                    }
+                });
+
+                Video.registerListener(null, notification_listener);
             }
         };
     }]);

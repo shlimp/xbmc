@@ -21,9 +21,10 @@
 
 <div class="main" data-ng-controller="MainController">
 
-    <div class="notifications" data-ng-controller="NotificationController" data-ng-show="notifications.length>0">
+    <div data-notifications class="notifications" data-ng-show="notifications.length>0">
+        <div class="close" data-ng-click="dismiss()">X</div>
         <ul>
-            <li data-ng-repeat="notification in notifications">{{ notification.msg }}</li>
+            <li data-ng-repeat="notification in notifications" data-ng-bind-html="notification.msg"></li>
         </ul>
     </div>
 
@@ -47,7 +48,7 @@
                 <div class="value"><a href="http://www.imdb.com/title/{{ movie_details.imdbnumber }}" target="_blank">{{ movie_details.imdbnumber }}</a></div>
             </div>
             <div class="line trailer">
-                <iframe width="560" height="315" src="{{movie_details.trailer_url}}" frameborder="0" allowfullscreen></iframe>
+                <iframe width="560" height="315" data-ng-src="{{movie_details.trailer_url}}" frameborder="0" allowfullscreen></iframe>
             </div>
         </div>
     </div>
