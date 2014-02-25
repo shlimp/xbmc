@@ -6,7 +6,12 @@ ini_set('error_reporting', E_ALL);
 
 class General {
 	public function get_last_aired($tvshowid, $zipfile_url){
-		$local_zip = "zip/" . hash("md5", $zipfile_url) .".zip";
+	    $path = realpath(dirname(__FILE__));
+
+	    if (!file_exists($path . '/zip')) {
+            mkdir($path . '/zip', 0777, true);
+        }
+		$local_zip = $path . "/zip/" . hash("md5", $zipfile_url) .".zip";
 		// copy zip locally
 		copy($zipfile_url, $local_zip);
 		$za = new ZipArchive();
