@@ -13,45 +13,77 @@ angular.module('xbmc.services', ['ngResource'])
                 return false;
             },
 
-            find_index_in_array: function (arr, property, val) {
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i][property] == val)
-                        return i;
+            xml_to_json: function (xml) {
+                // Create the return object
+                var obj = {};
+                if(typeof xml == "string"){
+                    var parser = new DOMParser();
+                    xml = parser.parseFromString(xml,"text/xml");
                 }
-                return false;
+
+                if (xml.nodeType == 1) { // element
+                    // do attributes
+                    if (xml.attributes.length > 0) {
+                        obj["@attributes"] = {};
+                        for (var j = 0; j < xml.attributes.length; j++) {
+                            var attribute = xml.attributes.item(j);
+                            obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                        }
+                    }
+                } else if (xml.nodeType == 3) { // text
+                    obj = xml.nodeValue;
+                }
+
+                // do children
+                if (xml.hasChildNodes()) {
+                    for (var i = 0; i < xml.childNodes.length; i++) {
+                        var item = xml.childNodes.item(i);
+                        var nodeName = item.nodeName;
+                        if (typeof(obj[nodeName]) == "undefined") {
+                            obj[nodeName] = this.xml_to_json(item);
+                        } else {
+                            if (typeof(obj[nodeName].push) == "undefined") {
+                                var old = obj[nodeName];
+                                obj[nodeName] = [];
+                                obj[nodeName].push(old);
+                            }
+                            obj[nodeName].push(xmlToJson(item));
+                        }
+                    }
+                }
+                return obj;
             }
         }
     }])
-    .factory('GLOBALS', ['VIDEO', 'GUI', function (VIDEO, GUI) {
+    .factory('Globals', ['Video', function (Video) {
         return {
             left_menu_shown: true,
             current_page: "",
             commands: [
-                {name: "Scan Video Library", func: VIDEO.scan},
-                {name: "Clean Video Library", func: VIDEO.clean},
-                {name: "Toggle Full Screen", func: GUI.fullscreen}
+                {name: "Scan Video Library", func: Video.scan},
+                {name: "Clean Video Library", func: Video.clean}
             ],
             movies_grouping: [
                 {name: "No Grouping", value: "none", selected: true},
                 {name: "Genre", value: "genre", selected: false},
                 {name: "Year", value: "year", selected: false},
                 {name: "Writer", value: "writer", selected: false}
-            ]
+            ],
+            notifications: []
         }
     }])
-    .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'HOST', function (XBMC_API, $resource, $q, HOST) {
+    .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'SETTINGS', function (XBMC_API, $resource, $q, SETTINGS) {
         var Service = {};
         var Resource = $resource('jsonrpc.php', {}, {
             post: {method: 'POST', params: {}, isArray: false}
         });
 
         function sendRequest(request) {
-            var callbackId = XBMC_API.getCallbackId();
-            request.id = callbackId;
+            request.id = XBMC_API.getCallbackId();
             var defer = $q.defer();
-            var data = {url: "http://" + HOST + ":8080/jsonrpc", request: request};
+            var data = {url: "http://" + SETTINGS.HOST + ":8080/jsonrpc", request: request};
             Resource.post(data, function (data) {
-                console.log("data received from http", data.result);
+//                console.log("data received from http", data.result);
                 defer.resolve(data.result);
             });
             return defer.promise;
@@ -64,7 +96,30 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'HOST', function ($q, $rootScope, $timeout, HOST) {
+    .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', function (XBMC_API, $resource, $q) {
+        var Service = {};
+        var Resource = $resource('jsonrpc.php', {}, {
+            post: {method: 'POST', params: {}, isArray: false, headers: {'Content-Type': 'application/json'}}
+        });
+
+        function sendRequest(request) {
+            request.id = XBMC_API.getCallbackId();
+            var defer = $q.defer();
+            Resource.post(request, function (data) {
+//                console.log("data received from http", data);
+                defer.resolve(data.result);
+            });
+            return defer.promise;
+        }
+
+        Service.sendRequest = function (method, params) {
+            var request = {"jsonrpc": "2.0", "method": method, "params": params};
+            return sendRequest(request);
+        };
+
+        return Service;
+    }])
+    .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'SETTINGS', function ($q, $rootScope, $timeout, SETTINGS) {
         // We return this object to anything injecting our service
         var Service = {};
         // Keep all pending requests here until they get responses
@@ -72,7 +127,7 @@ angular.module('xbmc.services', ['ngResource'])
         // Create a unique callback ID to map requests to responses
         var currentCallbackId = 0;
         // Create our websocket object with the address to the websocket
-        var ws = new WebSocket("ws://" + HOST + ":9090/jsonrpc");
+        var ws = new WebSocket("ws://" + SETTINGS.HOST + ":9090/jsonrpc");
         var socket_ready = false;
 
         var listeners = {general: []};
@@ -87,12 +142,6 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         function sendRequest(request, notify) {
-//            if(!socket_ready){
-//                return $timeout(function(){
-//                    return sendRequest(request, notify);
-//                });
-//                return false;
-//            }
             var defer = $q.defer();
             var callbackId = getCallbackId();
             callbacks[callbackId] = {
@@ -196,7 +245,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('VIDEO', ['XBMC_API', 'Helpers', '$interval', function (XBMC_API, Helpers, $interval) {
+    .factory('Video', ['XBMC_API', 'LOCAL_API', 'Helpers', '$interval', function (XBMC_API, LOCAL_API, Helpers, $interval) {
         var prefix = "VideoLibrary.";
 
         var Service = {};
@@ -219,8 +268,12 @@ angular.module('xbmc.services', ['ngResource'])
             return XBMC_API.sendRequest(prefix + "GetMovies", {properties: ["title", "thumbnail", "genre", "year", "writer"], sort: {order: "descending", method: "dateadded"}});
         };
 
+        Service.getLastAired = function (tvshowid, zip_url) {
+            return LOCAL_API.sendRequest("get_last_aired", {tvshoid: tvshowid, zipfile_url: zip_url});
+        };
+
         Service.getShows = function () {
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {properties: ["title", "thumbnail", "genre", "art"], sort: {order: "descending", method: "dateadded"}}, true);
+            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {properties: ["title", "thumbnail", "genre", "art", "episodeguide"], sort: {order: "descending", method: "dateadded"}}, true);
             return promise.promise.then(
                 null,
                 null,
@@ -303,7 +356,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('GUI', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
+    .factory('Gui', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
         var prefix = "GUI.";
 
         var Service = {};
@@ -315,7 +368,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         return Service;
     }])
-    .factory('FILES', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
+    .factory('Files', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
         var prefix = "Files.";
 
         var Service = {};
@@ -326,4 +379,4 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         return Service;
-    }])
+    }]);

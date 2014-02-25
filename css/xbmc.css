@@ -53,6 +53,18 @@ div.content {
     -webkit-transition: padding-left linear 0.2s;
 }
 
+div.search_links {
+    white-space: normal;
+}
+
+div.search_links a{
+    display: inline-block;
+}
+
+div.search_links a:not(:first-child) {
+    padding-left: 10px;
+}
+
 
 /*
 autocomplete
@@ -335,18 +347,6 @@ div.items_list .item .image .show_over.ng-hide {
     max-height: 0;
     /*line-height: 0;*/
 }
-
-/*div.items_list.movies .item .image {*/
-    /*width: 150px;*/
-    /*height: 225px;*/
-    /*background-size: 150px 225px;*/
-/*}*/
-
-/*div.items_list.shows .item .image {*/
-    /*width: 150px;*/
-    /*height: 84px;*/
-    /*background-size: 150px 84px;*/
-/*}*/
 
 /*
 movie modal

@@ -11,7 +11,6 @@ angular.module('xbmc.directives', [])
             }
         }
     })
-
     .directive('autoComplete', function () {
         return{
             scope: {
@@ -158,4 +157,22 @@ angular.module('xbmc.directives', [])
                 })
             }
         };
-    });
+    })
+    .directive('links', ['SETTINGS', '$compile', function(SETTINGS, $compile){
+        return {
+            scope: {
+                item: "="
+            },
+            templateUrl: "views/links.html",
+            link: function (scope, element, attrs){
+                var links = SETTINGS.link_patterns;
+                var el = null;
+                var tpl = "";
+                for(var i = 0; i < links.length; i++){
+                    tpl = '<a href="'+links[i].url+'">'+links[i].name+'</a>';
+                    el = $compile( tpl )( scope );
+                    element.find('div').append(el);
+                }
+            }
+        };
+    }]);
