@@ -1,4 +1,5 @@
-<div data-ng-controller="HomeController">
+<div data-ng-controller="HomeController" class="main_content">
+    <div class="list_title">Recently Added Movies</div>
     <div class="items_list recently_added">
         <div class="item {{ direction }}" data-ng-repeat="movie in recent_movies" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
             <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.art.poster | encode }}')">
@@ -7,6 +8,7 @@
         </div>
     </div>
 
+    <div class="list_title">Recently Added Shows</div>
     <div class="items_list recently_added">
         <div class="item" data-ng-repeat="episode in recent_episodes">
             <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ episode.art['tvshow.poster'] | encode }}')">

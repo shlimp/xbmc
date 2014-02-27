@@ -1,4 +1,4 @@
-<div data-ng-controller="TVShowsController">
+<div data-ng-controller="TVShowsController" class="main_content">
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="show in shows | filter:{title:$root.shows_filter}">
             <div class="image {{ show.has_new_episode_class }}" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')" data-ng-mouseover="show_mouse_over=show.tvshowid"  data-ng-mouseleave="show_mouse_over=null">
