@@ -11,10 +11,16 @@
         <a href="#!/movies" class="left_menu_item">
             <div data-ng-show="selected_menu_item=='movies'" class="selected">Movies</div>
             <div data-ng-show="selected_menu_item!='movies'">Movies</div>
+            <div data-ng-show="selected_menu_item=='movies'" class="search selected">
+                <input type="text" placeholder="filter movies" data-ng-model="$root.movies_filter" data-ng-click="$event.preventDefault()" />
+            </div>
         </a>
         <a href="#!/shows" class="left_menu_item">
             <div data-ng-show="selected_menu_item=='shows'" class="selected">TV Shows</div>
             <div data-ng-show="selected_menu_item!='shows'">TV Shows</div>
+            <div data-ng-show="selected_menu_item=='shows'" class="search selected">
+                <input type="text" placeholder="filter shows" data-ng-model="$root.shows_filter" data-ng-click="$event.preventDefault()" />
+            </div>
         </a>
     </div>
     <div class="toggler_wrapper"><div class="toggler" data-ng-click="show_left_menu=!show_left_menu"></div></div>

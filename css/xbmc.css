@@ -220,19 +220,19 @@ div.left_menu .left_menu_space{
 
 div.left_menu .left_menu_item{
     width: 100%;
-    height: 50px;
     line-height: 50px;
     vertical-align: middle;
     font-size: 20px;
     cursor: pointer;
     color: #000000;
     text-decoration: none;
-}
-
-div.left_menu .left_menu_item div{
     border-width: 1px 0 1px 0;
     border-style: solid;
     border-color: deepskyblue;
+    display: inline-block;
+}
+
+div.left_menu .left_menu_item div{
     transition: background 0.2s ease-in-out;
     -webkit-transition: background 0.2s ease-in-out;
 
@@ -241,6 +241,22 @@ div.left_menu .left_menu_item div{
 div.left_menu .left_menu_item div.selected,
 div.left_menu .left_menu_item div:hover{
     background: rgba(0, 0, 0, 0.3);
+}
+
+div.left_menu .left_menu_item div.selected{
+    transition: all 0.2s linear;
+    -webkit-transition: all 0.2s linear;
+}
+
+div.left_menu .left_menu_item div.selected.ng-hide-add, div.left_menu .left_menu_item div.selected.ng-hide-remove {
+    display: block !important;
+    max-height: 50px;
+    /*line-height: 15px;*/
+}
+
+div.left_menu .left_menu_item div.selected.ng-hide {
+    max-height: 0;
+    /*line-height: 0;*/
 }
 
 /*
@@ -295,8 +311,8 @@ div.items_list .item {
 }
 
 div.items_list .item.ng-enter, div.items_list .item.ng-leave {
-    transition: transform 0.2s ease-in-out;
-    -webkit-transition: -webkit-transform 0.2s ease-in-out;
+    transition: transform 0.3s ease-in-out;
+    -webkit-transition: -webkit-transform 0.3s ease-in-out;
 }
 
 div.items_list .item.ng-enter {
@@ -307,6 +323,16 @@ div.items_list .item.ng-enter {
 div.items_list .item.ng-enter.ng-enter-active {
     transform: scale(1);
     -webkit-transform: scale(1);
+}
+
+div.items_list .item.ng-leave {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+}
+
+div.items_list .item.ng-leave.ng-leave-active {
+    transform: scale(0);
+    -webkit-transform: scale(0);
 }
 
 
