@@ -142,15 +142,38 @@ notifications styles
 div.notifications {
     border: 1px solid deepskyblue;
     border-radius: 5px;
-    padding: 0 10px 10px 10px;
     position: absolute;
     right: 20px;
     top: 20px;
     background: rgba(0, 0, 0, 0.7);
     z-index: 10;
 
-    transition: all 0.2s linear;
-    -webkit-transition: all 0.2s linear;
+    transition: all 1s linear;
+    -webkit-transition: all 1s linear;
+}
+
+div.notifications .item {
+    color: #FFFFFF;
+    font-size: 20px;
+    padding: 10px;
+    transition: all 1s linear;
+    -webkit-transition: all 1s linear;
+}
+
+div.notifications .item.ng-enter {
+    opacity: 0;
+}
+
+div.notifications .item.ng-enter.ng-enter-active {
+    opacity: 1;
+}
+
+div.notifications .item.ng-leave {
+    opacity: 1;
+}
+
+div.notifications .item.ng-leave-active {
+    opacity: 0;
 }
 
 div.notifications .close {
@@ -173,12 +196,6 @@ div.notifications.ng-hide-add, div.notifications.ng-hide-remove {
 
 div.notifications.ng-hide {
     opacity: 0;
-}
-
-div.notifications li {
-    color: #FFFFFF;
-    font-size: 20px;
-    padding-top: 10px;
 }
 
 /*
@@ -225,6 +242,7 @@ div.left_menu_container .toggler_wrapper .toggler {
     top: 45%;
     z-index: 999;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 div.left_menu .left_menu_space{

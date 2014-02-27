@@ -62,6 +62,8 @@ angular.module('xbmc.controllers', [])
     }])
 
     .controller('HomeController', ["$scope", "Video", function($scope, Video){
+        $scope.recent_movies = [];
+        $scope.recent_episodes = [];
         getRecent();
 
         function getRecent(){
@@ -83,6 +85,7 @@ angular.module('xbmc.controllers', [])
     }])
 
     .controller('MoviesController', ["$scope", "Video", function($scope, Video){
+        $scope.movies = [];
         getMovies();
 
         function getMovies(){
@@ -101,6 +104,7 @@ angular.module('xbmc.controllers', [])
     }])
 
     .controller('TVShowsController', ["$scope", "Video", "Globals", "Helpers", function($scope, Video, Globals, Helpers){
+        $scope.shows = [];
         getTvShows();
 
         function getTvShows(){

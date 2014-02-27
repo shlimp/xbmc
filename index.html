@@ -21,10 +21,10 @@
 
 <div class="main" data-ng-controller="MainController">
 
-    <div data-notifications class="notifications" data-ng-show="notifications.length>0">
+    <div data-notifications class="notifications">
         <div class="close" data-ng-click="dismiss()">X</div>
         <ul>
-            <li data-ng-repeat="notification in notifications" data-ng-bind-html="notification.msg"></li>
+            <li data-ng-repeat="notification in notifications" data-ng-bind-html="notification.msg" class="item"></li>
         </ul>
     </div>
 
