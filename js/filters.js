@@ -17,6 +17,6 @@ angular.module('xbmc.filters', [])
     })
     .filter('dash_str', function(){
         return function(text){
-            return text.replace(" ", "-").toLowerCase();
+            return text.replace(/\s/g, "-").toLowerCase();
         }
     });
