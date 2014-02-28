@@ -14,4 +14,9 @@ angular.module('xbmc.filters', [])
             }
             return text;
         }
+    })
+    .filter('dash_str', function(){
+        return function(text){
+            return text.replace(" ", "-").toLowerCase();
+        }
     });
