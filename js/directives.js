@@ -170,7 +170,7 @@ angular.module('xbmc.directives', [])
             },
             templateUrl: "views/links.html",
             link: function (scope, element) {
-                var links = SETTINGS.link_patterns;
+                var links = SETTINGS.LINK_PATTERNS;
                 var el = null;
                 var tpl = "";
                 for (var i = 0; i < links.length; i++) {

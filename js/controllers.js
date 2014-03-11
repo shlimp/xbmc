@@ -25,14 +25,15 @@ angular.module('xbmc.controllers', [])
             $scope.movie_details = null;
         };
 
-        Globals.searchNewEpisodes();
+        if (SETTINGS.SEARCH_NEW_EPISODES_ON_LOAD)
+            Globals.searchNewEpisodes();
 
     }])
 
     .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', function($scope, $rootScope, $timeout, Video, SETTINGS){
         $scope.HOST = SETTINGS.HOST;
         $scope.search_results = [];
-        $rootScope.link_patterns = SETTINGS.link_patterns;
+        $rootScope.link_patterns = SETTINGS.LINK_PATTERNS;
 
         $scope.search = function(val){
             if(!val){
