@@ -1,8 +1,9 @@
-<div data-ng-controller="MoviesController" class="main_content">
+<div class="main_content">
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="movie in movies | filter:{title:$root.movies_filter}" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
-            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
-                <div class="title">{{ movie.title }}</div>
+            <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ movie.thumbnail| encode }}" /></div>
+            <div class="cell data">
+                <b>{{ movie.title }}</b>
             </div>
         </div>
     </div>

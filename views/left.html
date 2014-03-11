@@ -3,21 +3,43 @@
         <div class="autocomplete" data-auto-complete data-items="commands" data-placeholder="Commands" data-tabindex="1" data-on-select="run_command" data-local-filter="true">
             {{ item.name }}
         </div>
+        <div>
+            <div class="view_type grid" data-ng-class="{selected: view_type == 'grid'}" data-ng-click="change_view_type('grid')">
+                <div class="row">
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                </div>
+                <div class="row">
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                </div>
+                <div class="row">
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                    <div class="cell">&nbsp;</div>
+                </div>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div class="view_type list" data-ng-class="{selected: view_type == 'list'}" data-ng-click="change_view_type('list')">
+                <div class="row"><div class="cell long">&nbsp;</div></div>
+                <div class="row"><div class="cell long">&nbsp;</div></div>
+                <div class="row"><div class="cell long">&nbsp;</div></div>
+            </div>
+        </div>
         <div class="left_menu_space"></div>
         <a href="#!/" class="left_menu_item">
-            <div data-ng-show="selected_menu_item==''" class="selected">Home</div>
-            <div data-ng-show="selected_menu_item!=''">Home</div>
+            <div data-ng-class="{selected: selected_menu_item==''}">Home</div>
         </a>
         <a href="#!/movies" class="left_menu_item">
-            <div data-ng-show="selected_menu_item=='movies'" class="selected">Movies</div>
-            <div data-ng-show="selected_menu_item!='movies'">Movies</div>
+            <div data-ng-class="{selected: selected_menu_item=='movies'}">Movies</div>
             <div data-ng-show="selected_menu_item=='movies'" class="search selected">
                 <input type="text" placeholder="filter movies" data-ng-model="$root.movies_filter" data-ng-click="$event.preventDefault()" />
             </div>
         </a>
         <a href="#!/shows" class="left_menu_item">
-            <div data-ng-show="selected_menu_item=='shows'" class="selected">TV Shows</div>
-            <div data-ng-show="selected_menu_item!='shows'">TV Shows</div>
+            <div data-ng-class="{selected: selected_menu_item=='shows'}">TV Shows</div>
             <div data-ng-show="selected_menu_item=='shows'" class="search selected">
                 <input type="text" placeholder="filter shows" data-ng-model="$root.shows_filter" data-ng-click="$event.preventDefault()" />
             </div>

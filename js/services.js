@@ -57,7 +57,7 @@ angular.module('xbmc.services', ['ngResource'])
         }
     }])
 
-    .factory('Globals', ['Video', 'Helpers', function (Video, Helpers) {
+    .factory('Globals', ['Video', 'Helpers', 'SETTINGS', function (Video, Helpers, SETTINGS) {
         var Service = {
             left_menu_shown: true,
             current_page: "",
@@ -73,7 +73,8 @@ angular.module('xbmc.services', ['ngResource'])
                 {name: "Writer", value: "writer", selected: false}
             ],
             notifications: [],
-            searchNewEpisodes: searchNewEpisodes
+            searchNewEpisodes: searchNewEpisodes,
+            view_type: SETTINGS.DEFAULT_VIEW_TYPE
         };
 
         function searchNewEpisodes(){
@@ -314,7 +315,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getShows = function () {
             var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
-                properties: ["title", "thumbnail", "genre", "art", "episodeguide"],
+                properties: ["title", "thumbnail", "genre", "art", "episodeguide", "playcount"],
                 sort: {order: "descending", method: "dateadded"}
             }, true);
             return promise.promise.then(

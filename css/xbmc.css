@@ -148,16 +148,16 @@ div.notifications {
     background: rgba(0, 0, 0, 0.7);
     z-index: 10;
 
-    transition: all 1s linear;
-    -webkit-transition: all 1s linear;
+    transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
 }
 
 div.notifications .item {
     color: #FFFFFF;
     font-size: 20px;
     padding: 10px;
-    transition: all 1s linear;
-    -webkit-transition: all 1s linear;
+    transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
 }
 
 div.notifications .item.ng-enter {
@@ -290,6 +290,39 @@ div.left_menu .left_menu_item div.selected.ng-hide {
     /*line-height: 0;*/
 }
 
+div.view_type {
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+    border: 1px solid deepskyblue;
+    border-radius: 2px;
+    padding: 5px;
+    transition: all 0.2s linear;
+    -webkit-transition: all 0.2s ease-in;
+}
+
+div.view_type.selected {
+    border: 3px solid deepskyblue;
+}
+
+div.view_type .row {
+    display: block;
+    height: 6px;
+}
+
+div.view_type .cell {
+    display: inline-block;
+    background-color: deepskyblue;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    margin: -1px;
+}
+
+div.view_type .cell.long {
+    width: 20px;
+}
+
 /*
 content
 */
@@ -328,16 +361,121 @@ div.movies_list {
 }
 
 /*
-lists
+grid
 */
 
-div.items_list .item {
+div.items_grid .item {
     width: 200px;
     height: 300px;
     display: inline-flex;
     position: relative;
     white-space: normal;
     cursor: pointer;
+    /*left: 0;*/
+}
+
+div.items_grid .item.ng-enter, div.items_grid .item.ng-leave {
+    transition: transform 0.3s ease-in-out;
+    -webkit-transition: -webkit-transform 0.3s ease-in-out;
+}
+
+div.items_grid .item.ng-enter {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+}
+
+div.items_grid .item.ng-enter.ng-enter-active {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+}
+
+div.items_grid .item.ng-leave {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+}
+
+div.items_grid .item.ng-leave.ng-leave-active {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+}
+
+
+div.items_grid .item .image {
+    margin: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+    -webkit-transition: box-shadow 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+}
+
+div.items_grid .item .image.has_new{
+    box-shadow: 0 0 5px 2px green;
+}
+
+div.items_grid .item .image.has_new:hover{
+    box-shadow: 4px 4px 4px green;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+}
+
+div.items_grid .item .image:hover{
+    box-shadow: 4px 4px 4px #000;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+}
+
+div.items_grid .item .image .title {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+div.items_grid .item .image {
+    width: 150px;
+    height: 225px;
+    background-size: 150px 225px;
+}
+
+div.items_grid .item .image a{
+    color: #ffffff;
+}
+
+div.items_grid .item .image .show_over{
+    max-height: 100px;
+    /*line-height: 15px;*/
+    transition: all 0.2s linear;
+    overflow: hidden;
+}
+
+div.items_grid .item .image .show_over.ng-hide-add, div.items_grid .item .image .show_over.ng-hide-remove {
+    display: block !important;
+    max-height: 100px;
+    /*line-height: 15px;*/
+}
+
+div.items_grid .item .image .show_over.ng-hide {
+    max-height: 0;
+    /*line-height: 0;*/
+}
+
+
+
+/*
+list
+*/
+
+div.items_list .item {
+    width: 100%;
+    height: 70px;
+    display: inlin-block;
+    position: relative;
+    white-space: normal;
+    cursor: pointer;
+    border-bottom: 1px solid deepskyblue;
+    padding: 10px;
     /*left: 0;*/
 }
 
@@ -366,66 +504,17 @@ div.items_list .item.ng-leave.ng-leave-active {
     -webkit-transform: scale(0);
 }
 
-
-div.items_list .item .image {
-    margin: auto;
-    background-repeat: no-repeat;
-    background-position: center;
-    text-align: center;
-    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-    -webkit-transition: box-shadow 0.2s ease-in-out, -webkit-transform 0.2s ease-in-out;
+div.items_list .item div.cell {
+    display: table-cell;
 }
 
-div.items_list .item .image.has_new{
-    box-shadow: 0 0 5px 2px green;
+div.items_list .item div.cell.data {
+    padding-left: 20px;
 }
 
-div.items_list .item .image.has_new:hover{
-    box-shadow: 4px 4px 4px green;
-    transform: scale(1.2);
-    -webkit-transform: scale(1.2);
-}
-
-div.items_list .item .image:hover{
-    box-shadow: 4px 4px 4px #000;
-    transform: scale(1.2);
-    -webkit-transform: scale(1.2);
-}
-
-div.items_list .item .image .title {
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #FFFFFF;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-div.items_list .item .image {
-    width: 150px;
-    height: 225px;
-    background-size: 150px 225px;
-}
-
-div.items_list .item .image a{
-    color: #ffffff;
-}
-
-div.items_list .item .image .show_over{
-    max-height: 100px;
-    /*line-height: 15px;*/
-    transition: all 0.2s linear;
-    overflow: hidden;
-}
-
-div.items_list .item .image .show_over.ng-hide-add, div.items_list .item .image .show_over.ng-hide-remove {
-    display: block !important;
-    max-height: 100px;
-    /*line-height: 15px;*/
-}
-
-div.items_list .item .image .show_over.ng-hide {
-    max-height: 0;
-    /*line-height: 0;*/
+div.items_list .item img{
+    width: 50px;
+    vertical-align: top;
 }
 
 /*

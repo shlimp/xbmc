@@ -9,10 +9,12 @@ angular.module('xbmc')
                     templateUrl: 'views/home.html'
                 }).
                 when('/movies/', {
-                    templateUrl: 'views/movies.html'
+                    controller: "MoviesController",
+                    template: '<div data-ng-include="templateUrl"></div>'
                 }).
                 when('/shows/', {
-                    templateUrl: 'views/shows.html'
+                    controller: "TVShowsController",
+                    template: '<div data-ng-include="templateUrl"></div>'
                 }).
                 otherwise({
                     redirectTo: '/'

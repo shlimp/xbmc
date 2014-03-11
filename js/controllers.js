@@ -84,7 +84,8 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('MoviesController', ["$scope", "Video", function($scope, Video){
+    .controller('MoviesController', ["$scope", "Video", "Globals", function($scope, Video, Globals){
+        $scope.templateUrl = "views/" + $scope.view_type + "/movies.html";
         $scope.movies = [];
         getMovies();
 
@@ -100,6 +101,10 @@ angular.module('xbmc.controllers', [])
 
         $scope.$on(Video.prefix + 'OnCleanFinished', function(){
             getMovies();
+        });
+
+        $scope.$watch(function(){return Globals.view_type}, function(new_val){
+            $scope.templateUrl = "views/" + new_val + "/movies.html";
         });
     }])
 
@@ -134,9 +139,14 @@ angular.module('xbmc.controllers', [])
         $scope.$on(Video.prefix + 'OnCleanFinished', function(){
             getTvShows();
         });
+
+        $scope.$watch(function(){return Globals.view_type}, function(new_val){
+            $scope.templateUrl = "views/" + new_val + "/shows.html";
+        });
     }])
 
-    .controller('LeftMenuController', ["$scope", "Globals", function($scope, Globals){
+    .controller('LeftMenuController', ["$rootScope", "$scope", "Globals", function($scope, $rootScope, Globals){
+        $scope.view_type = Globals.view_type;
         $scope.show_left_menu = Globals.left_menu_shown;
         $scope.selected_menu_item = Globals.current_page;
         $scope.commands = Globals.commands;
@@ -147,11 +157,16 @@ angular.module('xbmc.controllers', [])
             }
         };
 
+        $scope.change_view_type = function(type){
+            Globals.view_type = type;
+            $scope.view_type = type;
+        };
+
         $scope.$watch(function(){return Globals.current_page}, function(new_val){
             $scope.selected_menu_item = new_val;
         });
 
         $scope.$watch('show_left_menu', function(new_val){
             Globals.left_menu_shown = new_val;
-        })
+        });
     }]);

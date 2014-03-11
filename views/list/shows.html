@@ -1,0 +1,13 @@
+<div class="main_content">
+    <div class="items_list movies_list">
+        <div class="item" data-ng-repeat="show in shows | filter:{title:$root.shows_filter}">
+            <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}" /></div>
+            <div class="cell data">
+                <b>{{ show.title }}</b>
+                <br />
+                latest episode: {{ show.latest_season | leading_zero }}x{{ show.latest_episode | leading_zero }}
+                <div data-ng-show="show.has_new_episode" data-links data-item="show"></div>
+            </div>
+        </div>
+    </div>
+</div>
