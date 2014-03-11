@@ -290,7 +290,7 @@ div.left_menu .left_menu_item div.selected.ng-hide {
     /*line-height: 0;*/
 }
 
-div.view_type {
+div.left_menu div.view_type {
     display: inline-block;
     margin-top: 10px;
     cursor: pointer;
@@ -301,16 +301,16 @@ div.view_type {
     -webkit-transition: all 0.2s ease-in;
 }
 
-div.view_type.selected {
+div.left_menu div.view_type.selected {
     border: 3px solid deepskyblue;
 }
 
-div.view_type .row {
+div.left_menu div.view_type .row {
     display: block;
     height: 6px;
 }
 
-div.view_type .cell {
+div.left_menu div.view_type .cell {
     display: inline-block;
     background-color: deepskyblue;
     width: 5px;
@@ -319,7 +319,7 @@ div.view_type .cell {
     margin: -1px;
 }
 
-div.view_type .cell.long {
+div.left_menu div.view_type .cell.long {
     width: 20px;
 }
 
@@ -461,14 +461,11 @@ div.items_grid .item .image .show_over.ng-hide {
     /*line-height: 0;*/
 }
 
-
-
 /*
 list
 */
 
 div.items_list .item {
-    width: 100%;
     height: 70px;
     display: inlin-block;
     position: relative;
@@ -476,7 +473,14 @@ div.items_list .item {
     cursor: pointer;
     border-bottom: 1px solid deepskyblue;
     padding: 10px;
+    background: rgba(255, 255, 255, 1);
+    transition: background 0.2s ease-in-out;
+    -webkit-transition: background 0.2s ease-in-out;
     /*left: 0;*/
+}
+
+div.items_list .item:hover {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 div.items_list .item.ng-enter, div.items_list .item.ng-leave {

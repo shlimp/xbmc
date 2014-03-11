@@ -146,7 +146,7 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('LeftMenuController', ["$rootScope", "$scope", "Globals", function($scope, $rootScope, Globals){
+    .controller('LeftMenuController', ["$scope", "Globals", function($scope, Globals){
         $scope.view_type = Globals.view_type;
         $scope.show_left_menu = Globals.left_menu_shown;
         $scope.selected_menu_item = Globals.current_page;
