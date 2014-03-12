@@ -2,6 +2,7 @@
     <div class="items_grid movies_list">
         <div class="item" data-ng-repeat="movie in movies | filter:{title:$root.movies_filter}" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
             <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
+                <div class="watched" data-ng-show="movie.playcount > 0">&#10003;</div>
                 <div class="title">{{ movie.title }}</div>
             </div>
         </div>

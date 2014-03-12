@@ -304,7 +304,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getMovies = function () {
             return XBMC_API.sendRequest(prefix + "GetMovies", {
-                properties: ["title", "thumbnail", "genre", "year", "writer"],
+                properties: ["title", "thumbnail", "genre", "year", "writer", "playcount"],
                 sort: {order: "descending", method: "dateadded"}
             });
         };

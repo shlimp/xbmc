@@ -2,6 +2,7 @@
     <div class="items_grid movies_list">
         <div class="item" data-ng-repeat="show in shows | filter:{title:$root.shows_filter}">
             <div class="image {{ show.has_new_episode_class }}" style="background-image: url('http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}')" data-ng-mouseover="show_mouse_over=show.tvshowid"  data-ng-mouseleave="show_mouse_over=null">
+                <div class="watched" data-ng-show="show.playcount > 0">&#10003;</div>
                 <div class="title">
                     {{ show.title }}
                     <div class="show_over" data-ng-show="show_mouse_over==show.tvshowid">

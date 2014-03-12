@@ -1,6 +1,7 @@
 <div class="main_content">
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="show in shows | filter:{title:$root.shows_filter}">
+            <div class="watched" data-ng-show="show.playcount > 0">&#10003;</div>
             <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}" /></div>
             <div class="cell data">
                 <b>{{ show.title }}</b>
