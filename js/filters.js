@@ -15,8 +15,13 @@ angular.module('xbmc.filters', [])
             return text;
         }
     })
-    .filter('dash_str', function(){
+    .filter('space_to_dash', function(){
         return function(text){
-            return text.replace(/\s/g, "-").toLowerCase();
+            return text.replace(/\s/g, "-");
+        }
+    })
+    .filter('clean_name', function(){
+        return function(text){
+            return text.replace(/(\s\(.+\))/g, "").toLowerCase();
         }
     });
