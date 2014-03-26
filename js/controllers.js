@@ -32,26 +32,19 @@ angular.module('xbmc.controllers', [])
 
     .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', function($scope, $rootScope, $timeout, Video, SETTINGS){
         $scope.HOST = SETTINGS.HOST;
-        $scope.search_results = [];
+        $scope.all_movies_and_shows = [];
         $rootScope.link_patterns = SETTINGS.LINK_PATTERNS;
 
-        $scope.search = function(val){
-            if(!val){
-                $scope.search_results = [];
-                return false;
-            }
-            var results = [];
-            Video.searchMovies(val).then(function(/*Video.Movies*/data){
-                if(data.movies)
-                    results = results.concat(data.movies);
-                return Video.searchTVShows(val);
-            }).then(function(/*Video.TvShows*/data){
-                if(data.tvshows)
-                    results = results.concat(data.tvshows);
-                $scope.search_results = results;
-            });
-            return true;
-        };
+        var results = [];
+        Video.getMovies().then(function(/*Video.Movies*/data){
+            if(data.movies)
+                results = results.concat(data.movies);
+            return Video.getShows();
+        }).then(function(/*Video.TvShows*/data){
+            if(data.tvshows)
+                results = results.concat(data.tvshows);
+            $scope.all_movies_and_shows = results;
+        });
 
         $scope.select_item = function(item){
             if(item.movieid){

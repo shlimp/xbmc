@@ -13,7 +13,7 @@ angular.module('xbmc.directives', [])
         }
     })
 
-    .directive('autoComplete', function () {
+    .directive('autoComplete', ["$timeout", function ($timeout) {
         return{
             scope: {
                 items: "=items",
@@ -29,11 +29,13 @@ angular.module('xbmc.directives', [])
                     scope.transcludeFn = transclude;
                     scope.show_items = false;
                     scope.mouse_over = false;
-                    scope.current_item = -1;
                     scope.placeholder = attrs.placeholder;
                     scope.tabindex = attrs.tabindex || 0;
                     scope.local_filter = scope.$eval(attrs.localFilter) || false;
-                    scope.filtered_items = scope.items;
+                    scope.show_on_focus = scope.$eval(attrs.showOnFocus);
+                    scope.selected_item_idx = -1;
+                    if (scope.show_on_focus == undefined)
+                        scope.show_on_focus = true;
 
                     scope.widget_style = {};
 
@@ -41,41 +43,36 @@ angular.module('xbmc.directives', [])
                         scope.widget_style.width = attrs.width;
 
 
-                    function set_current_item(element) {
-                        var items = el.find("li");
-                        angular.forEach(items, function (item, idx) {
-                            if (item == element[0]) {
-                                focus_item(idx);
-                            }
-                        });
+                    function set_current_item(item, idx, offset) {
+                        if (offset){
+                            idx = scope.selected_item_idx + offset;
+                            if (idx < 0)
+                                idx = 0;
+                            if (idx > scope.filtered_items.length-1)
+                                idx = scope.filtered_items.length-1;
+                            item = scope.filtered_items[idx]
+                        }
+                        scope.selected_item_idx = idx;
+                        scope.selected_item = item;
+                        el.find("li").removeClass("hover");
+                        angular.element(el.find("li")[idx]).addClass("hover");
                     }
 
-                    function focus_item(idx, offset) {
-                        var items = el.find("li");
-                        idx = idx || scope.current_item + offset;
-                        if (offset && ((offset > 0 && idx > items.length - 1) || (offset < 0 && idx < 0)))
-                            return false;
-                        scope.current_item = idx;
-                        angular.element(items[idx]).addClass("hover");
-                        angular.forEach(items, function (item, i) {
-                            if (i != idx) {
-                                angular.element(item).removeClass("hover");
-                            }
-                        });
-                        return true;
-                    }
-
-                    function select(idx) {
-                        idx = typeof idx != "undefined" ? idx : scope.current_item;
-                        var items = scope.filtered_items || scope.items;
+                    function select(item) {
                         scope.mouse_over = false;
                         el.find("input")[0].blur();
                         if (scope.select_func)
-                            scope.select_func(items[idx]);
+                            scope.select_func(item);
+                    }
+
+                    function search(val) {
+                        if (scope.search_func)
+                            scope.search_func(val);
                     }
 
                     scope.open = function () {
-                        scope.show_items = true;
+                        if (scope.show_on_focus)
+                            scope.show_items = true;
                     };
 
                     scope.close = function (force) {
@@ -87,49 +84,48 @@ angular.module('xbmc.directives', [])
                         return true;
                     };
 
-                    scope.select = function (idx) {
-                        select(idx);
+                    scope.select = function (item) {
+                        select(item);
                         scope.close(true);
                     };
 
-                    scope.on_mouse_over = function (e) {
-                        scope.mouse_over = true;
-                        set_current_item(angular.element(e.target));
+                    scope.on_mouse_over = function (item, idx) {
+                        set_current_item(item, idx);
                     };
 
                     scope.on_mouse_leave = function () {
                         scope.mouse_over = false;
-                        scope.current_item = -1;
                     };
 
-                    function search(val) {
-                        if (scope.search_func)
-                            scope.search_func(val);
-                    }
-
-                    scope.$watch('query_items', function (new_val) {
-                        search(new_val);
-                    });
-
-                    angular.element(window).bind("keydown", function (e) {
+                    scope.on_key_down = function(e){
                         if (scope.show_items) {
                             switch (e.keyCode) {
                                 case 40:
-                                    focus_item(null, +1);
+                                    set_current_item(null, null, +1);
                                     break;
                                 case 38:
-                                    focus_item(null, -1);
+                                    set_current_item(null, null, -1);
                                     break;
                                 case 13:
-                                    select();
+                                    $timeout(function(){select(scope.selected_item)});
                                     break;
                             }
                         }
-                    })
+                    };
+
+                    scope.$watch('query_items', function (new_val) {
+                        if (!scope.show_on_focus){
+                            if (new_val)
+                                scope.show_items = true;
+                            else
+                                scope.close();
+                        }
+                        search(new_val);
+                    });
                 }
             }
         }
-    })
+    }])
 
     .directive('modalDialog', function () {
         return {

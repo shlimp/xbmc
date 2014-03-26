@@ -1,22 +1,21 @@
 <div>
     <input class="autocomplete_input" type="text" placeholder="{{ placeholder }}" data-ng-model="query_items" data-ng-focus="open()"
-           data-ng-blur="close()" tabindex="{{ tabindex }}" data-ng-style='widget_style'/>
-
+           data-ng-blur="close()" tabindex="{{ tabindex }}" data-ng-style='widget_style' data-ng-keydown="on_key_down($event)"/>
     <div class="items" data-ng-show="show_items" data-ng-style='widget_style'>
         <ul data-ng-if="local_filter">
             <li
                     class="autocomplete_item"
-                    data-ng-repeat="item in filtered_items = (items | filter:query_items)"
-                    data-ng-click="select($index)" data-ng-mouseover="on_mouse_over($event)"
-                    data-ng-mouseleave="on_mouse_leave($event)"
+                    data-ng-repeat="item in $parent.filtered_items = (items | filter:query_items)"
+                    data-ng-click="select(item)" data-ng-mouseover="on_mouse_over(item, $index)"
+                    data-ng-mouseleave="on_mouse_leave()"
                     data-my-transclude="transcludeFn"></li>
         </ul>
         <ul data-ng-if="!local_filter">
             <li
                     class="autocomplete_item"
                     data-ng-repeat="item in filtered_items = (items)"
-                    data-ng-click="select($index)" data-ng-mouseover="on_mouse_over($event)"
-                    data-ng-mouseleave="on_mouse_leave($event)"
+                    data-ng-click="select($index)" data-ng-mouseover="on_mouse_over(item, $index)"
+                    data-ng-mouseleave="on_mouse_leave()"
                     data-my-transclude="transcludeFn"></li>
         </ul>
     </div>

@@ -1,5 +1,5 @@
 <div class="header" data-ng-controller="HeaderController">
-    <div class="autocomplete" data-auto-complete data-items="search_results" data-on-search="search" data-placeholder="Global search" data-tabindex="2" data-on-select="select_item" data-width="700px" data-base-url="HOST">
+    <div class="autocomplete" data-auto-complete data-items="all_movies_and_shows" data-show-on-focus="false" data-local-filter="true" data-placeholder="Global search" data-tabindex="2" data-on-select="select_item" data-width="700px" data-base-url="HOST">
         <div style="display: table-cell;">
             <img data-ng-if="item.art.poster" src="http://{{ base_url }}:8080/image/{{ item.art.poster | encode }}" width="50">
             <img data-ng-if="item.art['tvshow.poster']" src="http://{{ base_url }}:8080/image/{{ item.art['tvshow.poster'] | encode }}" width="50">

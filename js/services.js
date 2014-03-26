@@ -304,7 +304,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getMovies = function () {
             return XBMC_API.sendRequest(prefix + "GetMovies", {
-                properties: ["title", "thumbnail", "genre", "year", "writer", "playcount"],
+                properties: ["title", "thumbnail", "genre", "year", "writer", "playcount", "art"],
                 sort: {order: "descending", method: "dateadded"}
             });
         };
@@ -315,7 +315,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getShows = function () {
             var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
-                properties: ["title", "thumbnail", "genre", "art", "episodeguide", "playcount"],
+                properties: ["title", "thumbnail", "rating", "genre", "art", "episodeguide", "playcount", "episode", "season"],
                 sort: {order: "descending", method: "dateadded"}
             }, true);
             return promise.promise.then(
