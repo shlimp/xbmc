@@ -28,6 +28,10 @@ angular.module('xbmc.controllers', [])
         if (SETTINGS.SEARCH_NEW_EPISODES_ON_LOAD)
             Globals.searchNewEpisodes();
 
+//        Player.getItem().then(function(data){
+//            console.log(data)
+//        });
+
     }])
 
     .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', function($scope, $rootScope, $timeout, Video, SETTINGS){
@@ -109,22 +113,18 @@ angular.module('xbmc.controllers', [])
         function getTvShows(){
             Video.getShows().then(function(/*Video.TvShows*/data){
                 $scope.shows = data.tvshows;
-            })
-        }
 
-        $scope.$watch("shows", function(shows){
-            if (shows) {
-                for (var i = 0; i < shows.length; i++) {
-                    Video.getLastAired(shows[i].tvshowid, Helpers.xml_to_json(shows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
-                        var show = Helpers.find_in_array(shows, "tvshowid", episodeguide.tvshowid);
+                for (var i = 0; i < $scope.shows.length; i++) {
+                    Video.getLastAired($scope.shows[i].tvshowid, Helpers.xml_to_json($scope.shows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
+                        var show = $scope.shows.filter(function(el){return el.tvshowid == episodeguide.tvshowid})[0];
                         if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
                             show.has_new_episode = true;
                             show.has_new_episode_class = "has_new";
                         }
                     });
                 }
-            }
-        });
+            })
+        }
 
         $scope.$on(Video.prefix + 'OnScanFinished', function(){
             getTvShows();
@@ -139,7 +139,7 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('LeftMenuController', ["$scope", "Globals", function($scope, Globals){
+    .controller('LeftMenuController', ["$scope", "Globals", "LocalData", function($scope, Globals, LocalData){
         $scope.view_type = Globals.view_type;
         $scope.show_left_menu = Globals.left_menu_shown;
         $scope.selected_menu_item = Globals.current_page;
@@ -154,6 +154,7 @@ angular.module('xbmc.controllers', [])
         $scope.change_view_type = function(type){
             Globals.view_type = type;
             $scope.view_type = type;
+            LocalData.set("view_type", type);
         };
 
         $scope.$watch(function(){return Globals.current_page}, function(new_val){

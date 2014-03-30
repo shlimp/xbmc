@@ -18,7 +18,8 @@ angular.module('xbmc.settings', [])
                 {name: "Subscenter", url: "http://subscenter.cinemast.com/he/subtitle/series/{{ item.title | clean_name | space_to_dash}}"}
             ],
             DEFAULT_VIEW_TYPE: "grid",
-            SEARCH_NEW_EPISODES_ON_LOAD: false
+            SEARCH_NEW_EPISODES_ON_LOAD: false,
+            DEBUG: false
         }
     }])
     .factory('SETTINGS', ['BASE_SETTINGS', function(BASE_SETTINGS){

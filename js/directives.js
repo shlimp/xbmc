@@ -34,6 +34,7 @@ angular.module('xbmc.directives', [])
                     scope.local_filter = scope.$eval(attrs.localFilter) || false;
                     scope.show_on_focus = scope.$eval(attrs.showOnFocus);
                     scope.selected_item_idx = -1;
+                    scope.filtered_items = scope.items;
                     if (scope.show_on_focus == undefined)
                         scope.show_on_focus = true;
 
@@ -44,6 +45,7 @@ angular.module('xbmc.directives', [])
 
 
                     function set_current_item(item, idx, offset) {
+                        scope.mouse_over = true;
                         if (offset){
                             idx = scope.selected_item_idx + offset;
                             if (idx < 0)
@@ -225,11 +227,13 @@ angular.module('xbmc.directives', [])
                         var template = new_val[i].template;
                         scope[new_val[i].obj_name] = new_val[i].obj;
                         el = $compile(template)(scope);
-                        $timeout(function(){
-                            if (!Helpers.find_in_array(scope.notifications, "msg", el.html())) {
-                                scope.notifications.push({msg: el.html(), time: new Date().getTime()+1000000});
-                            }
-                        });
+                        (function(el){
+                            $timeout(function(){
+                                if (scope.notifications.filter(function(item){return item.msg = el.html()}).length == 0){
+                                    scope.notifications.push({msg: el.html(), time: new Date().getTime()+1000000});
+                                }
+                            });
+                        })(el)
                     }
                 });
 

@@ -6,20 +6,12 @@ angular.module('xbmc.services', ['ngResource'])
 
     .factory('Helpers', [function () {
         return {
-            find_in_array: function (arr, property, val) {
-                for (var i = 0; i < arr.length; i++) {
-                    if (arr[i][property] == val)
-                        return arr[i];
-                }
-                return false;
-            },
-
             xml_to_json: function (xml) {
                 // Create the return object
                 var obj = {};
-                if(typeof xml == "string"){
+                if (typeof xml == "string") {
                     var parser = new DOMParser();
-                    xml = parser.parseFromString(xml,"text/xml");
+                    xml = parser.parseFromString(xml, "text/xml");
                 }
 
                 if (xml.nodeType == 1) { // element
@@ -57,7 +49,19 @@ angular.module('xbmc.services', ['ngResource'])
         }
     }])
 
-    .factory('Globals', ['Video', 'Helpers', 'SETTINGS', function (Video, Helpers, SETTINGS) {
+    .factory('Debug', ['SETTINGS', function (SETTINGS) {
+        function log() {
+            if (SETTINGS.DEBUG) {
+                console.log.apply(this, arguments);
+            }
+        }
+
+        return {
+            log: log
+        };
+    }])
+
+    .factory('Globals', ['Video', 'Helpers', 'SETTINGS', "LocalData", function (Video, Helpers, SETTINGS, LocalData) {
         var Service = {
             left_menu_shown: true,
             current_page: "",
@@ -74,16 +78,18 @@ angular.module('xbmc.services', ['ngResource'])
             ],
             notifications: [],
             searchNewEpisodes: searchNewEpisodes,
-            view_type: SETTINGS.DEFAULT_VIEW_TYPE
+            view_type: LocalData.get("view_type") || SETTINGS.DEFAULT_VIEW_TYPE
         };
 
-        function searchNewEpisodes(){
-            Video.getShows().then(function(/*Video.TvShows*/data){
+        function searchNewEpisodes() {
+            Video.getShows().then(function (/*Video.TvShows*/data) {
                 if (data.tvshows) {
                     for (var i = 0; i < data.tvshows.length; i++) {
-                        Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
-                            var show = Helpers.find_in_array(data.tvshows, "tvshowid", episodeguide.tvshowid);
-                            if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
+                        Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function (/*Video.EpisodeGuide*/episodeguide) {
+                            var show = data.tvshows.filter(function (item) {
+                                return item.tvshowid == episodeguide.tvshowid
+                            })[0];
+                            if (show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))) {
                                 Service.notifications.push({
                                     obj: show, obj_name: "show",
                                     persistant: true,
@@ -99,7 +105,22 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
-    .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'SETTINGS', function (XBMC_API, $resource, $q, SETTINGS) {
+    .factory('LocalData', function () {
+        return {
+            set: function (key, val) {
+                val = JSON.stringify(val);
+                localStorage.setItem(key, val);
+            },
+            get: function (key) {
+                return JSON.parse(localStorage.getItem(key));
+            },
+            remove: function (key) {
+                localStorage.removeItem(key);
+            }
+        }
+    })
+
+    .factory('XBMC_HTTP_API', ['XBMC_API', '$resource', '$q', 'SETTINGS', "Debug", function (XBMC_API, $resource, $q, SETTINGS, Debug) {
         var Service = {};
         var Resource = $resource('jsonrpc.php', {}, {
             post: {method: 'POST', params: {}, isArray: false}
@@ -110,7 +131,7 @@ angular.module('xbmc.services', ['ngResource'])
             var defer = $q.defer();
             var data = {url: "http://" + SETTINGS.HOST + ":8080/jsonrpc", request: request};
             Resource.post(data, function (data) {
-//                console.log("data received from http", data.result);
+                Debug.log("data received from http", data.result);
                 defer.resolve(data.result);
             });
             return defer.promise;
@@ -124,7 +145,7 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
-    .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', function (XBMC_API, $resource, $q) {
+    .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', "Debug", function (XBMC_API, $resource, $q, Debug) {
         var Service = {};
         var Resource = $resource('jsonrpc.php', {}, {
             post: {method: 'POST', params: {}, isArray: false, headers: {'Content-Type': 'application/json'}}
@@ -134,7 +155,7 @@ angular.module('xbmc.services', ['ngResource'])
             request.id = XBMC_API.getCallbackId();
             var defer = $q.defer();
             Resource.post(request, function (data) {
-//                console.log("data received from http", data);
+                Debug.log("data received from http", data);
                 defer.resolve(data.result);
             });
             return defer.promise;
@@ -148,11 +169,12 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
-    .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'SETTINGS', function ($q, $rootScope, $timeout, SETTINGS) {
+    .factory('XBMC_API', ['$q', '$rootScope', '$timeout', 'SETTINGS', "Debug", function ($q, $rootScope, $timeout, SETTINGS, Debug) {
         // We return this object to anything injecting our service
         var Service = {};
         // Keep all pending requests here until they get responses
-        /*Services.Callbacks*/var callbacks = {};
+        /*Services.Callbacks*/
+        var callbacks = {};
         // Create a unique callback ID to map requests to responses
         var currentCallbackId = 0;
         // Create our websocket object with the address to the websocket
@@ -162,7 +184,7 @@ angular.module('xbmc.services', ['ngResource'])
         var listeners = {general: []};
 
         ws.onopen = function () {
-//            console.log("Socket has been opened!");
+            Debug.log("Socket has been opened!");
             socket_ready = true;
         };
 
@@ -170,21 +192,18 @@ angular.module('xbmc.services', ['ngResource'])
             listener(JSON.parse(message.data));
         };
 
-        function sendRequest(request, notify) {
+        function sendRequest(request, data_to_append) {
             var defer = $q.defer();
             var callbackId = getCallbackId();
             callbacks[callbackId] = {
                 time: new Date(),
                 cb: defer,
-                notify: notify
+                data_to_append: data_to_append
             };
             request.id = callbackId;
-            console.log('Sending request', request);
+            Debug.log('Sending request', request);
             sendToWs(request);
-            if (notify)
-                return {promise: defer.promise, id: callbackId};
-            else
-                return defer.promise;
+            return defer.promise;
         }
 
         function sendToWs(request) {
@@ -199,15 +218,13 @@ angular.module('xbmc.services', ['ngResource'])
         }
 
         function listener(data) {
-            console.log("Received data from websocket: ", data);
+            Debug.log("Received data from websocket: ", data);
             // If an object exists with callback_id in our callbacks object, resolve it
             if (callbacks.hasOwnProperty(data.id)) {
-                if (callbacks[data.id].notify) {
-                    callbacks[data.id].cb.notify(data.result);
+                if (callbacks[data.id].data_to_append) {
+                    angular.extend(data.result, callbacks[data.id].data_to_append)
                 }
-                else {
-                    resolve_promise(data.id, data.result);
-                }
+                resolve_promise(data.id, data.result);
             }
             // this is a message, no id attached. broadcast to all listeners
             else {
@@ -237,6 +254,13 @@ angular.module('xbmc.services', ['ngResource'])
             })
         }
 
+        function resolve_direct_promise(defer, data) {
+            $timeout(function () {
+                defer.resolve(data);
+                $rootScope.$apply();
+            })
+        }
+
         // This creates a new callback ID for a request
         function getCallbackId() {
             currentCallbackId += 1;
@@ -258,10 +282,10 @@ angular.module('xbmc.services', ['ngResource'])
         }
 
         // Define a "getter" for getting customer data
-        Service.sendRequest = function (method, params, notify) {
+        Service.sendRequest = function (method, params, data_to_append) {
             var request = {"jsonrpc": "2.0", "method": method, "params": params};
             // Storing in a variable for clarity on what sendRequest returns
-            return sendRequest(request, notify);
+            return sendRequest(request, data_to_append);
         };
 
         Service.registerListener = function (method, func) {
@@ -271,11 +295,12 @@ angular.module('xbmc.services', ['ngResource'])
         Service.getCallbackId = getCallbackId;
 
         Service.resolve_promise = resolve_promise;
+        Service.resolve_direct_promise = resolve_direct_promise;
 
         return Service;
     }])
 
-    .factory('Video', ['XBMC_API', 'LOCAL_API', 'Helpers', '$interval', function (XBMC_API, LOCAL_API, Helpers, $interval) {
+    .factory('Video', ['XBMC_API', 'LOCAL_API', 'Helpers', '$interval', "$q", function (XBMC_API, LOCAL_API, Helpers, $interval, $q) {
         var prefix = "VideoLibrary.";
 
         var Service = {};
@@ -314,13 +339,11 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getShows = function () {
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
+            var defer = $q.defer();
+            XBMC_API.sendRequest(prefix + "GetTVShows", {
                 properties: ["title", "thumbnail", "rating", "genre", "art", "episodeguide", "playcount", "episode", "season"],
                 sort: {order: "descending", method: "dateadded"}
-            }, true);
-            return promise.promise.then(
-                null,
-                null,
+            }).then(
                 function (/*Video.TvShows*/data) {
                     var resolved = 0;
                     var i = 0;
@@ -329,12 +352,14 @@ angular.module('xbmc.services', ['ngResource'])
                             var item = data.tvshows[i];
                             XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: item.tvshowid, properties: ["tvshowid", "season", "episode"]}).then(
                                 function (/*Video.Seasons*/season_data) {
-                                    var show = Helpers.find_in_array(data.tvshows, "tvshowid", season_data.seasons[season_data.seasons.length - 1].tvshowid);
+                                    var show = data.tvshows.filter(function (item) {
+                                        return item.tvshowid == season_data.seasons[season_data.seasons.length - 1].tvshowid
+                                    })[0];
                                     show.latest_season = season_data.seasons[season_data.seasons.length - 1].season;
                                     show.latest_episode = season_data.seasons[season_data.seasons.length - 1].episode;
                                     resolved++;
                                     if (resolved >= data.tvshows.length - 1) {
-                                        XBMC_API.resolve_promise(promise.id, data);
+                                        XBMC_API.resolve_direct_promise(defer, data);
                                     }
                                 });
                             i++;
@@ -344,9 +369,11 @@ angular.module('xbmc.services', ['ngResource'])
                         }, 1);
                     }
                     else {
-                        XBMC_API.resolve_promise(promise.id, data);
+                        XBMC_API.resolve_direct_promise(defer, data);
                     }
                 });
+
+            return defer.promise;
         };
 
         Service.getMovieDetails = function (movie_id) {
@@ -354,53 +381,6 @@ angular.module('xbmc.services', ['ngResource'])
                 movieid: movie_id,
                 properties: ["title", "art", "rating", "tagline", "plot", "cast", "imdbnumber", "trailer", "file"]
             });
-        };
-
-        Service.searchMovies = function (val) {
-            return XBMC_API.sendRequest(prefix + "GetMovies", {
-                filter: {field: "title", operator: "contains", value: val},
-                properties: ["title", "thumbnail", "rating", "art"],
-                sort: {order: "ascending", method: "label"}
-            });
-        };
-
-        Service.searchTVShows = function (val) {
-            var promise = XBMC_API.sendRequest(prefix + "GetTVShows", {
-                filter: {field: "title", operator: "contains", value: val},
-                properties: ["title", "thumbnail", "rating", "episodeguide", "episode", "season", "art"],
-                sort: {order: "ascending", method: "label"}}, true);
-            return promise.promise.then(
-                null,
-                null,
-                function (data) {
-                    var resolved = 0;
-                    var i = 0;
-                    if (data.tvshows) {
-                        var interval = $interval(function () {
-                            var item = data.tvshows[i];
-                            XBMC_API.sendRequest(prefix + "GetSeasons", {
-                                tvshowid: item.tvshowid,
-                                properties: ["tvshowid", "season", "episode"]
-                            }).then(
-                                function (season_data) {
-                                    var show = Helpers.find_in_array(data.tvshows, "tvshowid", season_data.seasons[season_data.seasons.length - 1].tvshowid);
-                                    show.latest_season = season_data.seasons[season_data.seasons.length - 1].season;
-                                    show.latest_episode = season_data.seasons[season_data.seasons.length - 1].episode;
-                                    resolved++;
-                                    if (resolved >= data.tvshows.length - 1) {
-                                        XBMC_API.resolve_promise(promise.id, data);
-                                    }
-                                });
-                            i++;
-                            if (i == data.tvshows.length) {
-                                $interval.cancel(interval);
-                            }
-                        }, 1);
-                    }
-                    else {
-                        XBMC_API.resolve_promise(promise.id, data);
-                    }
-                });
         };
 
         Service.scan = function () {
@@ -435,6 +415,46 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.prepareDownload = function (path) {
             return XBMC_HTTP_API.sendRequest(prefix + "PrepareDownload", {path: path});
+        };
+
+        return Service;
+    }])
+
+    .factory('Player', ['XBMC_API', function (XBMC_API) {
+        var prefix = "Player.";
+
+        var Service = {};
+        Service.prefix = prefix;
+
+        Service.getActivePlayers = function () {
+            return XBMC_API.sendRequest(prefix + "GetActivePlayers");
+        };
+
+        Service.getItem = function () {
+            var active_player = null;
+            return Service.getActivePlayers().then(function (data) {
+                active_player = data.filter(function (item) {
+                    return item.type == "video"
+                })[0];
+                if (active_player)
+                    return XBMC_API.sendRequest(prefix + "GetItem", {playerid: active_player.playerid, properties: ["title", "runtime", "showtitle"]});
+                return data;
+            }).then(function (data) {
+                if (active_player)
+                    return XBMC_API.sendRequest(prefix + "GetProperties", {playerid: active_player.playerid, properties: ["time", "totaltime", "percentage"]}, data);
+                return data;
+            });
+        };
+
+        Service.getProperties = function () {
+            return Service.getActivePlayers().then(function (data) {
+                var active_player = data.filter(function (item) {
+                    return item.type == "video"
+                })[0];
+                if (active_player)
+                    return XBMC_API.sendRequest(prefix + "GetProperties", {playerid: active_player.playerid, properties: ["time", "totaltime", "percentage"]});
+                return data
+            });
         };
 
         return Service;
