@@ -1,0 +1,12 @@
+<div class="main_content">
+    <div class="items_grid movies_list">
+        <div class="item" data-ng-repeat="episode in episodes">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ episode.art.thumb | encode }}')">
+                <div class="watched" data-ng-show="episode.playcount > 0">&#10003;</div>
+                <div class="title">
+                    Episode {{ episode.episode }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

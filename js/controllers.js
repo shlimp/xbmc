@@ -34,10 +34,11 @@ angular.module('xbmc.controllers', [])
 
     }])
 
-    .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', function($scope, $rootScope, $timeout, Video, SETTINGS){
+    .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', "Globals", "$routeParams", function($scope, $rootScope, $timeout, Video, SETTINGS, Globals, /*Route.Params*/$routeParams){
         $scope.HOST = SETTINGS.HOST;
         $scope.all_movies_and_shows = [];
         $rootScope.link_patterns = SETTINGS.LINK_PATTERNS;
+        $scope.breadcrumbs = [];
 
         var results = [];
         Video.getMovies().then(function(/*Video.Movies*/data){
@@ -57,9 +58,48 @@ angular.module('xbmc.controllers', [])
                 $timeout(function(){$rootScope.$apply()});
             }
         };
+
+        $scope.$watch(function(){return Globals.current_page}, function(new_val){
+            var base_page = new_val;
+            if(base_page.indexOf(":") > -1)
+                base_page = base_page.substring(0, base_page.indexOf(":"));
+            $scope.breadcrumbs = [];
+            $scope.breadcrumbs.push({
+                name: "Home",
+                path: "#!/"
+            });
+            switch (base_page){
+                case "shows":
+                    $scope.breadcrumbs.push({
+                        name: "TV Shows",
+                        path: "#!/shows"
+                    });
+                    if ($routeParams.tvshowid){
+                        Video.getTVShowDetails($routeParams.tvshowid).then(function(/*Video.TvShows*/data){
+                            $scope.breadcrumbs.push({
+                                name: data.tvshowdetails.title,
+                                path: "#!/shows/" + $routeParams.tvshowid
+                            });
+                            if ($routeParams.seasonid){
+                                $scope.breadcrumbs.push({
+                                    name: "Season " + $routeParams.seasonid,
+                                    path: ""
+                                });
+                            }
+                        })
+                    }
+                    break;
+                case "movies":
+                    $scope.breadcrumbs.push({
+                        name: "Movies",
+                        path: "#!/movies"
+                    });
+            }
+        });
+
     }])
 
-    .controller('HomeController', ["$scope", "Video", function($scope, Video){
+    .controller('HomeController', ["$scope", "Video", "XBMC_API", function($scope, Video, XBMC_API){
         $scope.recent_movies = [];
         $scope.recent_episodes = [];
         getRecent();
@@ -73,16 +113,12 @@ angular.module('xbmc.controllers', [])
             });
         }
 
-        $scope.$on(Video.prefix + 'OnScanFinished', function(){
-            getRecent();
-        });
-
-        $scope.$on(Video.prefix + 'OnCleanFinished', function(){
-            getRecent();
-        });
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getRecent);
+        Video.registerListener('OnCleanFinished', getRecent);
     }])
 
-    .controller('MoviesController', ["$scope", "Video", "Globals", function($scope, Video, Globals){
+    .controller('MoviesController', ["$scope", "Video", "Globals", "XBMC_API", function($scope, Video, Globals, XBMC_API){
         $scope.templateUrl = "views/" + $scope.view_type + "/movies.html";
         $scope.movies = [];
         getMovies();
@@ -93,20 +129,16 @@ angular.module('xbmc.controllers', [])
             })
         }
 
-        $scope.$on(Video.prefix + 'OnScanFinished', function(){
-            getMovies();
-        });
-
-        $scope.$on(Video.prefix + 'OnCleanFinished', function(){
-            getMovies();
-        });
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getMovies);
+        Video.registerListener('OnCleanFinished', getMovies);
 
         $scope.$watch(function(){return Globals.view_type}, function(new_val){
             $scope.templateUrl = "views/" + new_val + "/movies.html";
         });
     }])
 
-    .controller('TVShowsController', ["$scope", "Video", "Globals", "Helpers", function($scope, Video, Globals, Helpers){
+    .controller('TVShowsController', ["$scope", "Video", "Globals", "Helpers", "XBMC_API", function($scope, Video, Globals, Helpers, XBMC_API){
         $scope.shows = [];
         getTvShows();
 
@@ -126,16 +158,50 @@ angular.module('xbmc.controllers', [])
             })
         }
 
-        $scope.$on(Video.prefix + 'OnScanFinished', function(){
-            getTvShows();
-        });
-
-        $scope.$on(Video.prefix + 'OnCleanFinished', function(){
-            getTvShows();
-        });
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getTvShows);
+        Video.registerListener('OnCleanFinished', getTvShows);
 
         $scope.$watch(function(){return Globals.view_type}, function(new_val){
             $scope.templateUrl = "views/" + new_val + "/shows.html";
+        });
+    }])
+
+    .controller('SeasonsController', ["$scope", "Video", "Globals", "$routeParams", "XBMC_API", function($scope, Video, Globals, $routeParams, XBMC_API){
+        $scope.seasons = [];
+        getSeasons();
+
+        function getSeasons(){
+            Video.getSeasons($routeParams.tvshowid).then(function(data){
+                $scope.seasons = data.seasons;
+            });
+        }
+
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getSeasons);
+        Video.registerListener('OnCleanFinished', getSeasons);
+
+        $scope.$watch(function(){return Globals.view_type}, function(new_val){
+            $scope.templateUrl = "views/" + new_val + "/seasons.html";
+        });
+    }])
+
+    .controller('EpisodesController', ["$scope", "Video", "Globals", "$routeParams", "XBMC_API", function($scope, Video, Globals, $routeParams, XBMC_API){
+        $scope.episodes = [];
+        getEpisodes();
+
+        function getEpisodes(){
+            Video.getEpisodes($routeParams.tvshowid, $routeParams.seasonid).then(function(data){
+                $scope.episodes = data.episodes;
+            });
+        }
+
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getEpisodes);
+        Video.registerListener('OnCleanFinished', getEpisodes);
+
+        $scope.$watch(function(){return Globals.view_type}, function(new_val){
+            $scope.templateUrl = "views/" + new_val + "/episodes.html";
         });
     }])
 
@@ -158,10 +224,13 @@ angular.module('xbmc.controllers', [])
         };
 
         $scope.$watch(function(){return Globals.current_page}, function(new_val){
+            if(new_val.indexOf(":") > -1)
+                new_val = new_val.substring(0, new_val.indexOf(":"));
             $scope.selected_menu_item = new_val;
         });
 
         $scope.$watch('show_left_menu', function(new_val){
             Globals.left_menu_shown = new_val;
         });
+
     }]);

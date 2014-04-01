@@ -16,6 +16,14 @@ angular.module('xbmc')
                     controller: "TVShowsController",
                     template: '<div data-ng-include="templateUrl"></div>'
                 }).
+                when('/shows/:tvshowid', {
+                    controller: "SeasonsController",
+                    template: '<div data-ng-include="templateUrl"></div>'
+                }).
+                when('/shows/:tvshowid/:seasonid', {
+                    controller: "EpisodesController",
+                    template: '<div data-ng-include="templateUrl"></div>'
+                }).
                 otherwise({
                     redirectTo: '/'
                 });

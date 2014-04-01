@@ -224,7 +224,7 @@ angular.module('xbmc.services', ['ngResource'])
                 if (callbacks[data.id].data_to_append) {
                     angular.extend(data.result, callbacks[data.id].data_to_append)
                 }
-                resolve_promise(data.id, data.result);
+                resolvePromise(data.id, data.result);
             }
             // this is a message, no id attached. broadcast to all listeners
             else {
@@ -244,7 +244,7 @@ angular.module('xbmc.services', ['ngResource'])
             }
         }
 
-        function resolve_promise(id, data) {
+        function resolvePromise(id, data) {
             $timeout(function () {
                 if (callbacks.hasOwnProperty(id)) {
                     callbacks[id].cb.resolve(data);
@@ -254,7 +254,7 @@ angular.module('xbmc.services', ['ngResource'])
             })
         }
 
-        function resolve_direct_promise(defer, data) {
+        function resolveDirectPromise(defer, data) {
             $timeout(function () {
                 defer.resolve(data);
                 $rootScope.$apply();
@@ -281,6 +281,14 @@ angular.module('xbmc.services', ['ngResource'])
             }
         }
 
+        function cleanListeners() {
+            for(var listener in listeners){
+                if (listeners.hasOwnProperty(listener) && listener != "general"){
+                    delete listeners[listener];
+                }
+            }
+        }
+
         // Define a "getter" for getting customer data
         Service.sendRequest = function (method, params, data_to_append) {
             var request = {"jsonrpc": "2.0", "method": method, "params": params};
@@ -294,8 +302,8 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getCallbackId = getCallbackId;
 
-        Service.resolve_promise = resolve_promise;
-        Service.resolve_direct_promise = resolve_direct_promise;
+        Service.resolveDirectPromise = resolveDirectPromise;
+        Service.cleanListeners = cleanListeners;
 
         return Service;
     }])
@@ -359,7 +367,7 @@ angular.module('xbmc.services', ['ngResource'])
                                     show.latest_episode = season_data.seasons[season_data.seasons.length - 1].episode;
                                     resolved++;
                                     if (resolved >= data.tvshows.length - 1) {
-                                        XBMC_API.resolve_direct_promise(defer, data);
+                                        XBMC_API.resolveDirectPromise(defer, data);
                                     }
                                 });
                             i++;
@@ -369,11 +377,23 @@ angular.module('xbmc.services', ['ngResource'])
                         }, 1);
                     }
                     else {
-                        XBMC_API.resolve_direct_promise(defer, data);
+                        XBMC_API.resolveDirectPromise(defer, data);
                     }
                 });
 
             return defer.promise;
+        };
+
+        Service.getTVShowDetails = function(show_id){
+            return XBMC_API.sendRequest(prefix + "GetTVShowDetails", {tvshowid: parseInt(show_id), properties: ["title"]})
+        };
+
+        Service.getSeasons = function(show_id){
+            return XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: parseInt(show_id), properties: ["season", "showtitle", "playcount", "art", "tvshowid"]})
+        };
+
+        Service.getEpisodes = function(show_id, season_id){
+            return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), season: parseInt(season_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
         };
 
         Service.getMovieDetails = function (movie_id) {

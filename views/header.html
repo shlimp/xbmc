@@ -14,4 +14,11 @@
             </span>
         </div>
     </div>
+    <ul class="breadcrumbs">
+        <li data-ng-repeat="crumb in breadcrumbs">
+            <a data-ng-if="$index < breadcrumbs.length-1" href="{{ crumb.path }}">{{ crumb.name }}</a>
+            <span data-ng-if="$index == breadcrumbs.length-1">{{ crumb.name }}</span>
+            <span data-ng-if="$index < breadcrumbs.length-1">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+        </li>
+    </ul>
 </div>

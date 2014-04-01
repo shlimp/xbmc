@@ -54,7 +54,7 @@ div.content {
 }
 
 div.main_content {
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 div.search_links {
@@ -67,6 +67,11 @@ div.search_links a{
 
 div.search_links a:not(:first-child) {
     padding-left: 10px;
+}
+
+a.regular {
+    color: #000000;
+    text-decoration: none;
 }
 
 /*
@@ -340,6 +345,23 @@ div.content .header .global_search {
     width: 500px;
 }
 
+div.content .header .breadcrumbs {
+    margin-top:10px;
+	list-style: none;
+	overflow: hidden;
+}
+
+div.content .header .breadcrumbs li {
+	float: left;
+}
+
+div.content .header .breadcrumbs li a {
+	color: deepskyblue;
+	text-decoration: none;
+	position: relative;
+	display: inline-block;
+}
+
 /*
 recently added
 */
@@ -482,7 +504,7 @@ list
 
 div.items_list .item {
     height: 70px;
-    display: inlin-block;
+    display: block;
     position: relative;
     white-space: normal;
     cursor: pointer;
