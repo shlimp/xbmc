@@ -15,7 +15,7 @@ angular.module('xbmc.settings', [])
                 {name: "Torrentz", url: "http://torrentz.eu/search?f={{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}"},
                 {name: "TorrentLeach", url: "http://torrentleech.org/torrents/browse/index/query/{{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}"},
                 {name: "Subtitle", url: "http://www.subtitle.co.il/browse.php?q={{ item.title | clean_name }}"},
-                {name: "Subscenter", url: "http://subscenter.cinemast.com/he/subtitle/series/{{ item.title | clean_name | space_to_dash}}"}
+                {name: "Subscenter", url: "http://subscenter.cinemast.com/he/subtitle/series/{{ item.title | clean_name | space_to_dash}}/{{ item.latest_season }}/{{ item.latest_episode+1 }}"}
             ],
             DEFAULT_VIEW_TYPE: "grid",
             SEARCH_NEW_EPISODES_ON_LOAD: false,
