@@ -86,10 +86,11 @@ angular.module('xbmc.services', ['ngResource'])
                 if (data.tvshows) {
                     for (var i = 0; i < data.tvshows.length; i++) {
                         Video.getLastAired(data.tvshows[i].tvshowid, Helpers.xml_to_json(data.tvshows[i].episodeguide).episodeguide.url["#text"]).then(function (/*Video.EpisodeGuide*/episodeguide) {
+                            var last_aired = episodeguide.last_aired;
                             var show = data.tvshows.filter(function (item) {
-                                return item.tvshowid == episodeguide.tvshowid
+                                return item.tvshowid == last_aired.tvshowid
                             })[0];
-                            if (show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))) {
+                            if (show.latest_season < parseInt(last_aired.SeasonNumber) || (show.latest_season == parseInt(last_aired.SeasonNumber) && show.latest_episode < parseInt(last_aired.EpisodeNumber))) {
                                 Service.notifications.push({
                                     obj: show, obj_name: "show",
                                     persistant: true,
@@ -343,7 +344,7 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getLastAired = function (tvshowid, zip_url) {
-            return LOCAL_API.sendRequest("get_last_aired", {tvshoid: tvshowid, zipfile_url: zip_url});
+            return LOCAL_API.sendRequest("get_last_next_aired", {tvshoid: tvshowid, zipfile_url: zip_url});
         };
 
         Service.getShows = function () {

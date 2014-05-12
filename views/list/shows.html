@@ -7,6 +7,7 @@
                     <b>{{ show.title }}</b>
                     <br />
                     latest episode: {{ show.latest_season | leading_zero }}x{{ show.latest_episode | leading_zero }}
+                    <div data-ng-if="show.next_aired">Next episode on <b>{{ show.next_aired.FirstAired }}</b></div>
                     <div data-ng-show="show.has_new_episode" data-links data-item="show"></div>
                 </div>
         </a>

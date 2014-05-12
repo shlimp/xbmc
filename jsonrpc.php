@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 ini_set('error_reporting', E_ALL);
 
 class General {
-	public function get_last_aired($tvshowid, $zipfile_url){
+	public function get_last_next_aired($tvshowid, $zipfile_url){
 	    $path = realpath(dirname(__FILE__));
 
 	    if (!file_exists($path . '/zip')) {
@@ -33,14 +33,18 @@ class General {
 		
 		$today = date("Y-m-d");
 		$last_aired = false;
+		$next_aired = false;
 		foreach ($array["Data"]["Episode"] as $episode){
 			if(((strtotime("+1 days", strtotime($episode["FirstAired"]))) > time()) || ($episode["SeasonNumber"] != "0" && gettype($episode["FirstAired"]) == "array")){
+			    if(gettype($episode["FirstAired"]) == "string"){
+				    $next_aired = $episode;
+				}
 				break;
 			}
 			$last_aired = $episode;
 		}
 		$last_aired["tvshowid"] = $tvshowid;
-		return $last_aired;
+		return array("last_aired"=>$last_aired, "next_aired"=>$next_aired);
 	}
 }
 

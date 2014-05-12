@@ -148,11 +148,13 @@ angular.module('xbmc.controllers', [])
 
                 for (var i = 0; i < $scope.shows.length; i++) {
                     Video.getLastAired($scope.shows[i].tvshowid, Helpers.xml_to_json($scope.shows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){
-                        var show = $scope.shows.filter(function(el){return el.tvshowid == episodeguide.tvshowid})[0];
-                        if(show.latest_season < parseInt(episodeguide.SeasonNumber) || (show.latest_season == parseInt(episodeguide.SeasonNumber) && show.latest_episode < parseInt(episodeguide.EpisodeNumber))){
+                        var last_aired = episodeguide.last_aired;
+                        var show = $scope.shows.filter(function(el){return el.tvshowid == last_aired.tvshowid})[0];
+                        if(show.latest_season < parseInt(last_aired.SeasonNumber) || (show.latest_season == parseInt(last_aired.SeasonNumber) && show.latest_episode < parseInt(last_aired.EpisodeNumber))){
                             show.has_new_episode = true;
                             show.has_new_episode_class = "has_new";
                         }
+                        show.next_aired = episodeguide.next_aired;
                     });
                 }
             })
