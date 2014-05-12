@@ -34,7 +34,7 @@ class General {
 		$today = date("Y-m-d");
 		$last_aired = false;
 		foreach ($array["Data"]["Episode"] as $episode){
-			if((strtotime("+1 days", strtotime($episode["FirstAired"]))) > time()){
+			if(((strtotime("+1 days", strtotime($episode["FirstAired"]))) > time()) || ($episode["SeasonNumber"] != "0" && gettype($episode["FirstAired"]) == "array")){
 				break;
 			}
 			$last_aired = $episode;
