@@ -348,6 +348,7 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getShows = function () {
+            var self = this;
             var defer = $q.defer();
             XBMC_API.sendRequest(prefix + "GetTVShows", {
                 properties: ["title", "thumbnail", "rating", "genre", "art", "episodeguide", "playcount", "episode", "season"],
@@ -359,13 +360,13 @@ angular.module('xbmc.services', ['ngResource'])
                     if (data.tvshows) {
                         var interval = $interval(function () {
                             var item = data.tvshows[i];
-                            XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: item.tvshowid, properties: ["tvshowid", "season", "episode"]}).then(
-                                function (/*Video.Seasons*/season_data) {
+                            self.getEpisodes(item.tvshowid).then(
+                                function (/*Video.Episodes*/episodes_data) {
                                     var show = data.tvshows.filter(function (item) {
-                                        return item.tvshowid == season_data.seasons[season_data.seasons.length - 1].tvshowid
+                                        return item.tvshowid == episodes_data.episodes[episodes_data.episodes.length - 1].tvshowid
                                     })[0];
-                                    show.latest_season = season_data.seasons[season_data.seasons.length - 1].season;
-                                    show.latest_episode = season_data.seasons[season_data.seasons.length - 1].episode;
+                                    show.latest_season = episodes_data.episodes[episodes_data.episodes.length - 1].season;
+                                    show.latest_episode = episodes_data.episodes[episodes_data.episodes.length - 1].episode;
                                     resolved++;
                                     if (resolved >= data.tvshows.length - 1) {
                                         XBMC_API.resolveDirectPromise(defer, data);
@@ -375,7 +376,7 @@ angular.module('xbmc.services', ['ngResource'])
                             if (i == data.tvshows.length) {
                                 $interval.cancel(interval);
                             }
-                        }, 1);
+                        }, 100);
                     }
                     else {
                         XBMC_API.resolveDirectPromise(defer, data);
@@ -390,11 +391,14 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getSeasons = function(show_id){
-            return XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: parseInt(show_id), properties: ["season", "showtitle", "playcount", "art", "tvshowid"]})
+            return XBMC_API.sendRequest(prefix + "GetSeasons", {tvshowid: parseInt(show_id), properties: ["season", "showtitle", "playcount", "art", "tvshowid", "episode"]})
         };
 
         Service.getEpisodes = function(show_id, season_id){
-            return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), season: parseInt(season_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
+            if (season_id)
+                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), season: parseInt(season_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
+            else
+                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
         };
 
         Service.getMovieDetails = function (movie_id) {
