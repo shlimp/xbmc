@@ -12,6 +12,10 @@ angular.module('xbmc')
                     controller: "MoviesController",
                     template: '<div data-ng-include="templateUrl"></div>'
                 }).
+                when('/torrents/', {
+                    controller: "TorrentsController",
+                    template: '<div data-ng-include="templateUrl"></div>'
+                }).
                 when('/shows/', {
                     controller: "TVShowsController",
                     template: '<div data-ng-include="templateUrl"></div>'

@@ -44,6 +44,9 @@
                 <input type="text" placeholder="filter shows" data-ng-model="$root.shows_filter" data-ng-click="$event.preventDefault()" />
             </div>
         </a>
+        <a href="#!/torrents" class="left_menu_item">
+            <div data-ng-class="{selected: selected_menu_item=='torrent'}">Torrents</div>
+        </a>
     </div>
     <div class="toggler_wrapper"><div class="toggler" data-ng-click="show_left_menu=!show_left_menu"></div></div>
 </div>

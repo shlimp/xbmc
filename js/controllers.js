@@ -118,6 +118,11 @@ angular.module('xbmc.controllers', [])
         Video.registerListener('OnCleanFinished', getRecent);
     }])
 
+    .controller('TorrentsController', ["$scope", "XBMC_API", function($scope, XBMC_API){
+        $scope.templateUrl = "views/torrents.html";
+        XBMC_API.cleanListeners();
+    }])
+
     .controller('MoviesController', ["$scope", "Video", "Globals", "XBMC_API", function($scope, Video, Globals, XBMC_API){
         $scope.templateUrl = "views/" + $scope.view_type + "/movies.html";
         $scope.movies = [];
