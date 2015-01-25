@@ -118,8 +118,10 @@ angular.module('xbmc.controllers', [])
         Video.registerListener('OnCleanFinished', getRecent);
     }])
 
-    .controller('TorrentsController', ["$scope", "XBMC_API", function($scope, XBMC_API){
+    .controller('TorrentsController', ["$scope", 'SETTINGS', "XBMC_API", function($scope, SETTINGS, XBMC_API){
         $scope.templateUrl = "views/torrents.html";
+        $scope.HOST = SETTINGS.HOST;
+        $scope.torrent_url = "http://"+SETTINGS.HOST+":8100/transmission/web/";
         XBMC_API.cleanListeners();
     }])
 
