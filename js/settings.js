@@ -12,6 +12,7 @@ angular.module('xbmc.settings', [])
         return {
             HOST: "localhost",
             LINK_PATTERNS: [
+                {name: "Kickass", url: "http://kickass.to/{{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}/"},
                 {name: "Torrentz", url: "http://torrentz.eu/search?f={{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}"},
                 {name: "TorrentLeach", url: "http://torrentleech.org/torrents/browse/index/query/{{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}"},
                 {name: "Subtitle", url: "http://www.subtitle.co.il/browse.php?q={{ item.title | clean_name }}"},
