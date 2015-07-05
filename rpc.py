@@ -28,8 +28,9 @@ def get_last_next_aired(tvshowid, zipfile_url):
                 if isinstance(episode["FirstAired"], unicode):
                     next_aired = episode
                     break
-            last_aired = episode
-            last_aired["tvshowid"] = tvshowid
+            if episode["FirstAired"] is not None and datetime.strptime(episode["FirstAired"], "%Y-%m-%d") < datetime.now():
+                last_aired = episode
+        last_aired["tvshowid"] = tvshowid
         return {"last_aired": last_aired, "next_aired": next_aired}
 
 @jsonrpc.method("get_subtitles")
