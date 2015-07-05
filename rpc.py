@@ -6,8 +6,13 @@ import urllib2, cStringIO, zipfile
 import xmltodict
 
 app = Flask(__name__)
+app.config.from_object('settings')
+try:
+    app.config.from_object('settings_local')
+except:
+    pass
 cors = CORS(app)
-jsonrpc = JSONRPC(app, '/')
+jsonrpc = JSONRPC(app, app.config["RPC_PATH"])
 
 @jsonrpc.method('get_last_next_aired')
 def get_last_next_aired(tvshowid, zipfile_url):
