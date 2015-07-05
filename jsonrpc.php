@@ -46,6 +46,16 @@ class General {
 		$last_aired["tvshowid"] = $tvshowid;
 		return array("last_aired"=>$last_aired, "next_aired"=>$next_aired);
 	}
+
+	public function get_subtitles(){
+		$curl = curl_init($url);
+		curl_setopt_array($curl, array(
+			CURLOPT_RETURNTRANSFER => 1,
+		));
+		$xml = curl_exec("http://subscenter.cinemast.com/he/feeds/movies/latest/");
+		curl_close($curl);
+		return $xml;
+	}
 }
 
 $general = new General();

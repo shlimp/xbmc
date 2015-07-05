@@ -146,9 +146,9 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
-    .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', "Debug", function (XBMC_API, $resource, $q, Debug) {
+    .factory('LOCAL_API', ['XBMC_API', '$resource', '$q', "Debug", "SETTINGS",  function (XBMC_API, $resource, $q, Debug, SETTINGS) {
         var Service = {};
-        var Resource = $resource('jsonrpc.php', {}, {
+        var Resource = $resource('http://' + SETTINGS.RPC_HOST + SETTINGS.RPC_PATH, {}, {
             post: {method: 'POST', params: {}, isArray: false, headers: {'Content-Type': 'application/json'}}
         });
 
@@ -344,7 +344,11 @@ angular.module('xbmc.services', ['ngResource'])
         };
 
         Service.getLastAired = function (tvshowid, zip_url) {
-            return LOCAL_API.sendRequest("get_last_next_aired", {tvshoid: tvshowid, zipfile_url: zip_url});
+            return LOCAL_API.sendRequest("get_last_next_aired", {tvshowid: tvshowid, zipfile_url: zip_url});
+        };
+
+        Service.getSubtitles = function(){
+            return LOCAL_API.sendRequest("get_subtitles");
         };
 
         Service.getShows = function () {

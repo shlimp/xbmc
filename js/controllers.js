@@ -242,4 +242,15 @@ angular.module('xbmc.controllers', [])
             Globals.left_menu_shown = new_val;
         });
 
+    }])
+
+    .controller('SubtitlesController', ["$scope", "$http", "XBMC_API", "Video", function($scope, $http, XBMC_API, Video){
+        $scope.templateUrl = "views/subtitles.html";
+        Video.getSubtitles().then(function(data){
+            console.log(data);
+        });
+
+        XBMC_API.cleanListeners();
+        Video.registerListener('OnScanFinished', getRecent);
+        Video.registerListener('OnCleanFinished', getRecent);
     }]);

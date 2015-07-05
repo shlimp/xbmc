@@ -28,6 +28,10 @@ angular.module('xbmc')
                     controller: "EpisodesController",
                     template: '<div data-ng-include="templateUrl"></div>'
                 }).
+                when('/movies_subtitles/', {
+                    controller: "SubtitlesController",
+                    template: '<div data-ng-include="templateUrl"></div>'
+                }).
                 otherwise({
                     redirectTo: '/'
                 });

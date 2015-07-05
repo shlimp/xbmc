@@ -1,0 +1,32 @@
+from datetime import timedelta, datetime
+from flask import Flask
+from flask.ext.cors import CORS
+from flask_jsonrpc import JSONRPC
+import urllib2, cStringIO, zipfile
+import xmltodict
+
+app = Flask(__name__)
+cors = CORS(app)
+jsonrpc = JSONRPC(app, '/')
+
+@jsonrpc.method('get_last_next_aired')
+def get_last_next_aired(tvshowid, zipfile_url):
+    remote_zip = urllib2.urlopen(zipfile_url)
+    zip_string = cStringIO.StringIO(remote_zip.read())
+    with zipfile.ZipFile(zip_string) as zip:
+        data = xmltodict.parse(zip.read("en.xml"))
+        last_aired = False
+        next_aired = False
+        for episode in data["Data"]["Episode"]:
+            if episode["FirstAired"] is not None and (datetime.strptime(episode["FirstAired"], "%Y-%m-%d")+timedelta(days=1) > datetime.now() or episode["SeasonNumber"] != 0 and isinstance(episode["FirstAired"], list)):
+                if isinstance(episode["FirstAired"], unicode):
+                    next_aired = episode
+                    break
+            last_aired = episode
+            last_aired["tvshowid"] = tvshowid
+        return {"last_aired": last_aired, "next_aired": next_aired}
+
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')

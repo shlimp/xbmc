@@ -10,7 +10,9 @@
 angular.module('xbmc.settings', [])
     .factory('BASE_SETTINGS', [function(){
         return {
-            HOST: "localhost",
+            HOST: "127.0.0.1",
+            RPC_HOST: "127.0.0.1:5000/",
+            RPC_PATH: "",
             LINK_PATTERNS: [
                 {name: "Kickass", url: "http://kickass.to/usearch/{{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}/"},
                 {name: "Torrentz", url: "http://torrentz.eu/search?f={{ item.title | clean_name }} s{{ item.latest_season | leading_zero }}e{{ item.latest_episode+1 | leading_zero }}"},
