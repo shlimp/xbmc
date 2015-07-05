@@ -244,13 +244,13 @@ angular.module('xbmc.controllers', [])
 
     }])
 
-    .controller('SubtitlesController', ["$scope", "$http", "XBMC_API", "Video", function($scope, $http, XBMC_API, Video){
-        $scope.templateUrl = "views/subtitles.html";
+    .controller('SubtitlesController', ["$scope", "$http", "XBMC_API", "Video", "Globals", function($scope, $http, XBMC_API, Video, Globals){
+        $scope.$watch(function(){return Globals.view_type}, function(new_val){
+            $scope.templateUrl = "views/" + new_val + "/subtitles.html";
+        });
+        $scope.subs = [];
         Video.getSubtitles().then(function(data){
+            $scope.subs = data.rss.channel.item;
             console.log(data);
         });
-
-        XBMC_API.cleanListeners();
-        Video.registerListener('OnScanFinished', getRecent);
-        Video.registerListener('OnCleanFinished', getRecent);
     }]);

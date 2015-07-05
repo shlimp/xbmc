@@ -1,0 +1,12 @@
+<div class="main_content">
+    <div class="items_list movies_list">
+        <a class="item regular" href="{{ sub.link }}" target="_blank" data-ng-repeat="sub in subs">
+                <div class="cell image"><img src="http://subscenter.cinemast.com/{{ sub.image }}" /></div>
+                <div class="cell data">
+                    <b>{{ sub.title }}</b>
+                    <br />
+                    {{ sub.description }}
+                </div>
+        </a>
+    </div>
+</div>

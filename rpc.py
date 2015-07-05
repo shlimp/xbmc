@@ -11,6 +11,7 @@ try:
     app.config.from_object('settings_local')
 except:
     pass
+
 cors = CORS(app)
 jsonrpc = JSONRPC(app, app.config["RPC_PATH"])
 
@@ -30,6 +31,11 @@ def get_last_next_aired(tvshowid, zipfile_url):
             last_aired = episode
             last_aired["tvshowid"] = tvshowid
         return {"last_aired": last_aired, "next_aired": next_aired}
+
+@jsonrpc.method("get_subtitles")
+def get_subtitles():
+    response = urllib2.urlopen("http://subscenter.cinemast.com/he/feeds/movies/latest/")
+    return xmltodict.parse(response.read())
 
 
 
