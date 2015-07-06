@@ -5,6 +5,8 @@
             <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ movie.thumbnail| encode }}" /></div>
             <div class="cell data">
                 <b>{{ movie.title }}</b>
+                <br />
+                <a href="javascript: void(0);" data-ng-click="delete_movie($event, movie)">Delete movie</a>
             </div>
         </div>
     </div>

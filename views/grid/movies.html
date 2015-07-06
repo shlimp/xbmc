@@ -1,9 +1,14 @@
 <div class="main_content">
     <div class="items_grid movies_list">
         <div class="item" data-ng-repeat="movie in movies | filter:{title:$root.movies_filter}" data-ng-click="$root.movieid=movie.movieid; $root.movie_details_show = true;">
-            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')">
+            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ movie.thumbnail | encode }}')" data-ng-mouseover="movie_mouse_over=movie.movieid" data-ng-mouseleave="movie_mouse_over=null">
                 <div class="watched" data-ng-show="movie.playcount > 0">&#10003;</div>
-                <div class="title">{{ movie.title }}</div>
+                <div class="title">{{ movie.title }}
+                    <div class="show_over" data-ng-show="movie_mouse_over==movie.movieid">
+                        <br />
+                        <a href="javascript: void(0);" data-ng-click="delete_movie($event, movie)">Delete movie</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

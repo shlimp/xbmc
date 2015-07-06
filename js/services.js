@@ -338,7 +338,7 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getMovies = function () {
             return XBMC_API.sendRequest(prefix + "GetMovies", {
-                properties: ["title", "thumbnail", "genre", "year", "writer", "playcount", "art"],
+                properties: ["title", "thumbnail", "genre", "year", "writer", "playcount", "art", "file"],
                 sort: {order: "descending", method: "dateadded"}
             });
         };
@@ -436,7 +436,7 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
-    .factory('Files', ['XBMC_HTTP_API', function (XBMC_HTTP_API) {
+    .factory('Files', ['XBMC_HTTP_API', 'LOCAL_API', function (XBMC_HTTP_API, LOCAL_API) {
         var prefix = "Files.";
 
         var Service = {};
@@ -444,6 +444,10 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.prepareDownload = function (path) {
             return XBMC_HTTP_API.sendRequest(prefix + "PrepareDownload", {path: path});
+        };
+
+        Service.deleteMovie = function (path) {
+            return LOCAL_API.sendRequest("delete_movie", {path: path});
         };
 
         return Service;

@@ -125,7 +125,7 @@ angular.module('xbmc.controllers', [])
         XBMC_API.cleanListeners();
     }])
 
-    .controller('MoviesController', ["$scope", "Video", "Globals", "XBMC_API", function($scope, Video, Globals, XBMC_API){
+    .controller('MoviesController', ["$scope", "Video", "Globals", "XBMC_API", "Files", function($scope, Video, Globals, XBMC_API, Files){
         $scope.templateUrl = "views/" + $scope.view_type + "/movies.html";
         $scope.movies = [];
         getMovies();
@@ -135,6 +135,14 @@ angular.module('xbmc.controllers', [])
                 $scope.movies = data.movies;
             })
         }
+
+        $scope.delete_movie = function(ev, movie){
+            ev.stopPropagation();
+            if (confirm("Are you sure you want to delete " + movie.title + "?")){
+                Files.deleteMovie(movie.file);
+                Video.clean();
+            }
+        };
 
         XBMC_API.cleanListeners();
         Video.registerListener('OnScanFinished', getMovies);
