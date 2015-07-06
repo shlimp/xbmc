@@ -119,7 +119,6 @@ angular.module('xbmc.controllers', [])
     }])
 
     .controller('TorrentsController', ["$scope", 'SETTINGS', "XBMC_API", function($scope, SETTINGS, XBMC_API){
-        $scope.templateUrl = "views/torrents.html";
         $scope.HOST = SETTINGS.HOST;
         $scope.torrent_url = "http://"+SETTINGS.HOST+":8100/transmission/web/";
         XBMC_API.cleanListeners();
@@ -257,13 +256,24 @@ angular.module('xbmc.controllers', [])
 
     }])
 
-    .controller('SubtitlesController', ["$scope", "$http", "XBMC_API", "Video", "Globals", function($scope, $http, XBMC_API, Video, Globals){
+    .controller('SubtitlesController', ["$scope", "Video", "Globals", function($scope, Video, Globals){
         $scope.$watch(function(){return Globals.view_type}, function(new_val){
             $scope.templateUrl = "views/" + new_val + "/subtitles.html";
         });
         $scope.subs = [];
         Video.getSubtitles().then(function(data){
             $scope.subs = data.rss.channel.item;
-            console.log(data);
         });
+    }])
+
+    .controller('LogController', ["$scope", "Misc", "$interval", function($scope, Misc, $interval){
+        $scope.log = [];
+
+        function get_log(){
+            Misc.getLog().then(function (data) {
+                $scope.log = data;
+            });
+        }
+        get_log();
+        $interval(get_log, 2000);
     }]);

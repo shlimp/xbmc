@@ -453,6 +453,17 @@ angular.module('xbmc.services', ['ngResource'])
         return Service;
     }])
 
+    .factory('Misc', ['LOCAL_API', function (LOCAL_API) {
+
+        var Service = {};
+
+        Service.getLog = function () {
+            return LOCAL_API.sendRequest("get_log");
+        };
+
+        return Service;
+    }])
+
     .factory('Player', ['XBMC_API', function (XBMC_API) {
         var prefix = "Player.";
 

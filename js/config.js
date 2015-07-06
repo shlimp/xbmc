@@ -14,7 +14,7 @@ angular.module('xbmc')
                 }).
                 when('/torrents/', {
                     controller: "TorrentsController",
-                    template: '<div data-ng-include="templateUrl"></div>'
+                    templateUrl: 'views/torrents.html'
                 }).
                 when('/shows/', {
                     controller: "TVShowsController",
@@ -31,6 +31,10 @@ angular.module('xbmc')
                 when('/movies_subtitles/', {
                     controller: "SubtitlesController",
                     template: '<div data-ng-include="templateUrl"></div>'
+                }).
+                when('/log/', {
+                    controller: "LogController",
+                    templateUrl: 'views/log.html'
                 }).
                 otherwise({
                     redirectTo: '/'

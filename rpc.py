@@ -46,6 +46,13 @@ def delete_movie(path):
     shutil.rmtree(folder)
     return True
 
+@jsonrpc.method("get_log")
+def get_log():
+    with open(app.config["LOG_PATH"]) as f:
+        lines = f.readlines()
+        return lines[-100:-1]
+
+
 
 
 
