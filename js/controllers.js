@@ -266,7 +266,7 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('LogController', ["$scope", "Misc", "$interval", function($scope, Misc, $interval){
+    .controller('LogController', ["$scope", "Misc", "$interval", "SETTINGS", function($scope, Misc, $interval, SETTINGS){
         $scope.log = [];
 
         function get_log(){
@@ -275,5 +275,5 @@ angular.module('xbmc.controllers', [])
             });
         }
         get_log();
-        $interval(get_log, 2000);
+        $interval(get_log, SETTINGS.LOG_INTERVAL);
     }]);

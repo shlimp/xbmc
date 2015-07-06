@@ -22,6 +22,7 @@ angular.module('xbmc.settings', [])
             ],
             DEFAULT_VIEW_TYPE: "grid",
             SEARCH_NEW_EPISODES_ON_LOAD: false,
+            LOG_INTERVAL: 10000,
             DEBUG: false
         }
     }])
