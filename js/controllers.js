@@ -266,7 +266,7 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('LogController', ["$scope", "Misc", "$interval", "SETTINGS", function($scope, Misc, $interval, SETTINGS){
+    .controller('LogController', ["$scope", "$rootScope", "Misc", "$interval", "SETTINGS", function($scope, $rootScope, Misc, $interval, SETTINGS){
         $scope.log = [];
 
         function get_log(){
@@ -275,5 +275,8 @@ angular.module('xbmc.controllers', [])
             });
         }
         get_log();
-        $interval(get_log, SETTINGS.LOG_INTERVAL);
+        var interval = $interval(get_log, SETTINGS.LOG_INTERVAL);
+        $rootScope.$on("$routeChangeStart", function(){
+            $interval.cancel(interval);
+        })
     }]);
