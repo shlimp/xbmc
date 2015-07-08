@@ -2,8 +2,14 @@
     <div class="items_grid movies_list">
         <a class="item regular" href="{{ sub.link }}" target="_blank" data-ng-repeat="sub in subs">
             <div class="item">
-                <div class="image" style="background-image: url('http://subscenter.cinemast.com/{{ sub.image }}')">
-                    <div class="title">{{ sub.title }}</div>
+                <div class="image" style="background-image: url('http://subscenter.cinemast.com/{{ sub.image }}')" data-ng-mouseover="sub_mouse_over=sub.title" data-ng-mouseleave="sub_mouse_over=null">
+                    <div class="title">
+                        {{ sub.title }}
+                        <div class="show_over" data-ng-show="sub_mouse_over==sub.title">
+                            <br />
+                            {{ sub.description }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </a>
