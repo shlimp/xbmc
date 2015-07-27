@@ -268,8 +268,8 @@ angular.module('xbmc.controllers', [])
             Misc.getLog().then(function (data) {
                 $scope.log = data;
                 $timeout(function(){
-                    var el = document.querySelector(".log");
-                    el.scrollTop = el.scrollHeight
+                    var body = document.body;
+                    body.scrollTop = body.scrollHeight
                 }, 500);
             });
         }
