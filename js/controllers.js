@@ -40,16 +40,16 @@ angular.module('xbmc.controllers', [])
         $rootScope.link_patterns = SETTINGS.LINK_PATTERNS;
         $scope.breadcrumbs = [];
 
-        var results = [];
-        Video.getMovies().then(function(/*Video.Movies*/data){
-            if(data.movies)
-                results = results.concat(data.movies);
-            return Video.getShows();
-        }).then(function(/*Video.TvShows*/data){
-            if(data.tvshows)
-                results = results.concat(data.tvshows);
-            $scope.all_movies_and_shows = results;
-        });
+        //var results = [];
+        //Video.getMovies().then(function(/*Video.Movies*/data){
+        //    if(data.movies)
+        //        results = results.concat(data.movies);
+        //    return Video.getShows();
+        //}).then(function(/*Video.TvShows*/data){
+        //    if(data.tvshows)
+        //        results = results.concat(data.tvshows);
+        //    $scope.all_movies_and_shows = results;
+        //});
 
         $scope.select_item = function(item){
             if(item.movieid){
@@ -261,12 +261,14 @@ angular.module('xbmc.controllers', [])
         });
     }])
 
-    .controller('LogController', ["$scope", "$rootScope", "Misc", "$interval", "SETTINGS", function($scope, $rootScope, Misc, $interval, SETTINGS){
+    .controller('LogController', ["$scope", "$rootScope", "Misc", "$interval", "$timeout", "SETTINGS", function($scope, $rootScope, Misc, $interval, $timeout, SETTINGS){
         $scope.log = [];
 
         function get_log(){
             Misc.getLog().then(function (data) {
                 $scope.log = data;
+                var el = document.querySelector(".log");
+                $timeout(function(){el.scrollTop = el.scrollHeight}, 500);
             });
         }
         get_log();
