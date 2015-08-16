@@ -28,7 +28,10 @@ angular.module('xbmc.controllers', [])
 
         function get_playing(){
             Player.getItem().then(function(data){
-                if (data) {
+                if (Array.isArray(data) && data.length == 0) {
+                    return false;
+                }
+                else{
                     $scope.playing = data;
                 }
             });
