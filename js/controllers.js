@@ -5,7 +5,7 @@ angular.module('xbmc.controllers', [])
 
     .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", "Player", "$interval", function($scope, $rootScope, Video, SETTINGS, Globals, Player, $interval){
 
-        $scope.playing = null;
+        $scope.playing = {percentage: 0};
         $scope.content_style = {paddingLeft: "220px"};
         $scope.$watch(function(){return Globals.left_menu_shown}, function(new_val){
             $scope.content_style.paddingLeft = new_val == true? "220px": "20px";
