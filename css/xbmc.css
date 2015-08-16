@@ -672,3 +672,15 @@ modal styles
     display: inline-block;
     font-weight: bold;
 }
+
+
+div.player {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 500px;
+    border: 1px solid #03a9ff;
+    height: 50px;
+    z-index: 999;
+    background-color: #FFFFFF;
+}

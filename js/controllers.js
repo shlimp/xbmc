@@ -3,8 +3,9 @@
 /* Controllers */
 angular.module('xbmc.controllers', [])
 
-    .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", function($scope, $rootScope, Video, SETTINGS, Globals){
+    .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", "Player", "$interval", function($scope, $rootScope, Video, SETTINGS, Globals, Player, $interval){
 
+        $scope.playing = null;
         $scope.content_style = {paddingLeft: "220px"};
         $scope.$watch(function(){return Globals.left_menu_shown}, function(new_val){
             $scope.content_style.paddingLeft = new_val == true? "220px": "20px";
@@ -25,12 +26,20 @@ angular.module('xbmc.controllers', [])
             $scope.movie_details = null;
         };
 
+        function get_playing(){
+            Player.getItem().then(function(data){
+                $scope.playing = data;
+            });
+        }
+
         if (SETTINGS.SEARCH_NEW_EPISODES_ON_LOAD)
             Globals.searchNewEpisodes();
 
 //        Player.getItem().then(function(data){
 //            console.log(data)
 //        });
+
+        $interval(get_playing, 1000);
 
     }])
 
