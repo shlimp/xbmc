@@ -680,7 +680,11 @@ div.player {
     right: 0;
     width: 500px;
     border: 1px solid #03a9ff;
-    height: 50px;
+    height: 70px;
     z-index: 999;
     background-color: #FFFFFF;
+}
+
+div.player progress {
+    width: 400px;
 }

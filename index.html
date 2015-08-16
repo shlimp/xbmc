@@ -15,6 +15,8 @@
         <b>{{playing.item.title}}</b>
         <br />
         {{playing.time.hours}}:{{playing.time.minutes}}:{{playing.time.seconds}} / {{playing.totaltime.hours}}:{{playing.totaltime.minutes}}:{{playing.totaltime.seconds}}
+        <br />
+        <progress max="100" value="{{playing.percentage}}"></progress>
     </div>
 
     <div data-notifications class="notifications">
