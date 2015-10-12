@@ -5,6 +5,7 @@
                 <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}" /></div>
                 <div class="cell data">
                     <b>{{ show.title }}</b>
+                    <!--<a href="http://www.imdb.com/title/tt{{ show.imdbnumber }}">imdb</a>-->
                     <br />
                     latest episode: {{ show.latest_season | leading_zero }}x{{ show.latest_episode | leading_zero }}
                     <div data-ng-if="show.next_aired">Next episode on <b>{{ show.next_aired.FirstAired }}</b></div>

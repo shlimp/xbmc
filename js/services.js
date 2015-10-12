@@ -355,8 +355,8 @@ angular.module('xbmc.services', ['ngResource'])
             var self = this;
             var defer = $q.defer();
             XBMC_API.sendRequest(prefix + "GetTVShows", {
-                properties: ["title", "thumbnail", "rating", "genre", "art", "episodeguide", "playcount", "episode", "season"],
-                sort: {order: "descending", method: "dateadded"}
+                properties: ["title", "thumbnail", "rating", "genre", "art", "episodeguide", "playcount", "episode", "season", "imdbnumber"],
+                sort: {order: "ascending", method: "episode"}
             }).then(
                 function (/*Video.TvShows*/data) {
                     var resolved = 0;
@@ -400,9 +400,9 @@ angular.module('xbmc.services', ['ngResource'])
 
         Service.getEpisodes = function(show_id, season_id){
             if (season_id)
-                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), season: parseInt(season_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
+                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), season: parseInt(season_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"], sort: {order: "ascending", "method": "episode"}});
             else
-                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"]})
+                return XBMC_API.sendRequest(prefix + "GetEpisodes", {tvshowid: parseInt(show_id), properties: ["title", "plot", "playcount", "art", "tvshowid", "runtime", "season", "episode", "showtitle"], sort: {order: "ascending", "method": "episode"}});
         };
 
         Service.getMovieDetails = function (movie_id) {
