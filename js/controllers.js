@@ -182,7 +182,10 @@ angular.module('xbmc.controllers', [])
                             show.has_new_episode = true;
                             show.has_new_episode_class = "has_new";
                         }
-                        show.next_aired = episodeguide.next_aired;
+                        var next_aired = new Date(episodeguide.next_aired.FirstAired);
+                        if (next_aired instanceof  Date && isFinite(next_aired)) {
+                            show.next_aired = next_aired;
+                        }
                     });
                 }
             })
