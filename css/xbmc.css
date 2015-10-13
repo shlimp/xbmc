@@ -680,7 +680,7 @@ div.player {
     right: 0;
     width: 500px;
     border: 1px solid #03a9ff;
-    height: 70px;
+    max-height: 70px;
     z-index: 999;
     background-color: #FFFFFF;
     padding: 10px;
@@ -692,4 +692,15 @@ div.player {
 
 div.player progress {
     width: 400px;
+}
+
+div.player div.toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-right: 10px;
+    color: #03a9ff;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
 }

@@ -6,6 +6,8 @@ angular.module('xbmc.controllers', [])
     .controller("MainController", ["$scope", "$rootScope", "Video", "SETTINGS", "Globals", "Player", "$interval", function($scope, $rootScope, Video, SETTINGS, Globals, Player, $interval){
 
         $scope.playing = {percentage: 0};
+        $scope.user_toggle_player = false;
+        $scope.player_toggler = "+";
         $scope.content_style = {paddingLeft: "220px"};
         $scope.$watch(function(){return Globals.left_menu_shown}, function(new_val){
             $scope.content_style.paddingLeft = new_val == true? "220px": "20px";
@@ -29,13 +31,36 @@ angular.module('xbmc.controllers', [])
         function get_playing(){
             Player.getItem().then(function(data){
                 if (Array.isArray(data) && data.length == 0) {
+                    if (!$scope.user_toggle_player)
+                        toggle_player(false);
                     return false;
                 }
                 else{
+                    if (!$scope.user_toggle_player)
+                        toggle_player(true);
                     $scope.playing = data;
                 }
             });
         }
+
+        function toggle_player(show, changed_by_user){
+            if (changed_by_user){
+                $scope.user_toggle_player = true;
+            }
+            if (show == null){
+                show = !$scope.show_player;
+            }
+            if (show){
+                $scope.player_toggler = "-";
+                $scope.show_player = true;
+            }
+            else{
+                $scope.player_toggler = "+";
+                $scope.show_player = false;
+            }
+        }
+
+        $scope.toggle_player = toggle_player;
 
         if (SETTINGS.SEARCH_NEW_EPISODES_ON_LOAD)
             Globals.searchNewEpisodes();
