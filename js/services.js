@@ -380,7 +380,7 @@ angular.module('xbmc.services', ['ngResource'])
                             if (i == data.tvshows.length) {
                                 $interval.cancel(interval);
                             }
-                        }, 100);
+                        }, 10);
                     }
                     else {
                         XBMC_API.resolveDirectPromise(defer, data);
