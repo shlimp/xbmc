@@ -14,6 +14,7 @@ angular.module('xbmc.controllers', [])
         });
 
         $scope.HOST = SETTINGS.HOST;
+        $scope.PORT = SETTINGS.PORT;
         $scope.get_movie_details = function(){
             Video.getMovieDetails($rootScope.movieid).then(function(/*Video.MovieDetails*/data){
                 if (data.moviedetails.trailer.substring(0, data.moviedetails.trailer.indexOf("?")) == 'plugin://plugin.video.youtube/') {
@@ -75,6 +76,7 @@ angular.module('xbmc.controllers', [])
 
     .controller('HeaderController', ['$scope', '$rootScope', '$timeout', 'Video', 'SETTINGS', "Globals", "$routeParams", function($scope, $rootScope, $timeout, Video, SETTINGS, Globals, /*Route.Params*/$routeParams){
         $scope.HOST = SETTINGS.HOST;
+        $scope.PORT = SETTINGS.PORT;
         $scope.all_movies_and_shows = [];
         $rootScope.link_patterns = SETTINGS.LINK_PATTERNS;
         $scope.breadcrumbs = [];
@@ -159,6 +161,7 @@ angular.module('xbmc.controllers', [])
 
     .controller('TorrentsController', ["$scope", 'SETTINGS', "XBMC_API", function($scope, SETTINGS, XBMC_API){
         $scope.HOST = SETTINGS.HOST;
+        $scope.PORT = SETTINGS.PORT;
         $scope.torrent_url = "http://"+SETTINGS.HOST+":8100/transmission/web/";
         XBMC_API.cleanListeners();
     }])

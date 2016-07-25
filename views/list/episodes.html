@@ -2,7 +2,7 @@
     <div class="items_list movies_list">
         <div class="item" data-ng-repeat="episode in episodes">
             <div class="watched" data-ng-show="episode.playcount > 0">&#10003;</div>
-            <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ episode.art.thumb | encode }}" /></div>
+            <div class="cell image"><img src="http://{{ HOST }}:{{ PORT }}/image/{{ episode.art.thumb | encode }}" /></div>
             <div class="cell data">
                 <b>Episode {{ episode.episode }}</b>
                 <br /><br />

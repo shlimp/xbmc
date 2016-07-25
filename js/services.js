@@ -130,7 +130,7 @@ angular.module('xbmc.services', ['ngResource'])
         function sendRequest(request) {
             request.id = XBMC_API.getCallbackId();
             var defer = $q.defer();
-            var data = {url: "http://" + SETTINGS.HOST + ":8080/jsonrpc", request: request};
+            var data = {url: "http://" + SETTINGS.HOST + ":" + SETTINGS.PORT + "/jsonrpc", request: request};
             Resource.post(data, function (data) {
                 Debug.log("data received from http", data.result);
                 defer.resolve(data.result);

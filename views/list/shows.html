@@ -2,7 +2,7 @@
     <div class="items_list movies_list">
         <a class="item regular" href="#!/shows/{{ show.tvshowid }}" data-ng-repeat="show in shows | filter:{title:$root.shows_filter} | orderBy:['has_new_episode', 'next_aired']">
                 <div class="watched" data-ng-show="show.playcount > 0">&#10003;</div>
-                <div class="cell image"><img src="http://{{ HOST }}:8080/image/{{ show.art.poster| encode }}" /></div>
+                <div class="cell image"><img src="http://{{ HOST }}:{{ PORT }}/image/{{ show.art.poster| encode }}" /></div>
                 <div class="cell data">
                     <b>{{ show.title }}</b>
                     <!--<a href="http://www.imdb.com/title/tt{{ show.imdbnumber }}">imdb</a>-->

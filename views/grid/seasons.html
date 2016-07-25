@@ -1,7 +1,7 @@
 <div class="main_content">
     <div class="items_grid movies_list">
         <a class="item regular" href="#!/shows/{{ season.tvshowid }}/{{ season.season }}" data-ng-repeat="season in seasons">
-            <div class="image" style="background-image: url('http://{{ HOST }}:8080/image/{{ season.art.poster| encode }}')">
+            <div class="image" style="background-image: url('http://{{ HOST }}:{{ PORT }}/image/{{ season.art.poster| encode }}')">
                 <div class="watched" data-ng-show="season.playcount > 0">&#10003;</div>
                 <div class="title">
                     Season {{ season.season }}

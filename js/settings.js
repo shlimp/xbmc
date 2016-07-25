@@ -11,6 +11,7 @@ angular.module('xbmc.settings', [])
     .factory('BASE_SETTINGS', [function(){
         return {
             HOST: "127.0.0.1",
+            PORT: "8080",
             RPC_HOST: "127.0.0.1:5000/",
             RPC_PATH: "",
             LINK_PATTERNS: [
