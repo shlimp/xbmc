@@ -366,12 +366,17 @@ angular.module('xbmc.services', ['ngResource'])
                             var item = data.tvshows[i];
                             self.getEpisodes(item.tvshowid).then(
                                 function (/*Video.Episodes*/episodes_data) {
-                                    var show = data.tvshows.filter(function (item) {
-                                        return item.tvshowid == episodes_data.episodes[episodes_data.episodes.length - 1].tvshowid
-                                    })[0];
-                                    show.latest_season = episodes_data.episodes[episodes_data.episodes.length - 1].season;
-                                    show.latest_episode = episodes_data.episodes[episodes_data.episodes.length - 1].episode;
-                                    resolved++;
+                                    if (episodes_data.hasOwnProperty('episodes')) {
+                                        var show = data.tvshows.filter(function (item) {
+                                            return item.tvshowid == episodes_data.episodes[episodes_data.episodes.length - 1].tvshowid
+                                        })[0];
+                                        show.latest_season = episodes_data.episodes[episodes_data.episodes.length - 1].season;
+                                        show.latest_episode = episodes_data.episodes[episodes_data.episodes.length - 1].episode;
+                                        resolved++;
+                                    }
+                                    else {
+                                        resolved++;
+                                    }
                                     if (resolved >= data.tvshows.length - 1) {
                                         XBMC_API.resolveDirectPromise(defer, data);
                                     }
