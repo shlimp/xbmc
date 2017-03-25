@@ -200,7 +200,7 @@ angular.module('xbmc.controllers', [])
 
         function getTvShows(){
             Video.getShows().then(function(/*Video.TvShows*/data){
-                $scope.shows = data.tvshows;
+                $scope.shows = data;
 
                 for (var i = 0; i < $scope.shows.length; i++) {
                     Video.getLastAired($scope.shows[i].tvshowid, Helpers.xml_to_json($scope.shows[i].episodeguide).episodeguide.url["#text"]).then(function(/*Video.EpisodeGuide*/episodeguide){

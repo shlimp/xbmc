@@ -359,30 +359,28 @@ angular.module('xbmc.services', ['ngResource'])
                 sort: {order: "ascending", method: "episode"}
             }).then(
                 function (/*Video.TvShows*/data) {
+                    var shows = data.tvshows.filter(function(itm) {
+                        return itm.season > 0 && itm.episode > 0;
+                    });
                     var resolved = 0;
                     var i = 0;
-                    if (data.tvshows) {
+                    if (shows) {
                         var interval = $interval(function () {
-                            var item = data.tvshows[i];
+                            var item = shows[i];
                             self.getEpisodes(item.tvshowid).then(
                                 function (/*Video.Episodes*/episodes_data) {
-                                    if (episodes_data.hasOwnProperty('episodes')) {
-                                        var show = data.tvshows.filter(function (item) {
-                                            return item.tvshowid == episodes_data.episodes[episodes_data.episodes.length - 1].tvshowid
-                                        })[0];
-                                        show.latest_season = episodes_data.episodes[episodes_data.episodes.length - 1].season;
-                                        show.latest_episode = episodes_data.episodes[episodes_data.episodes.length - 1].episode;
-                                        resolved++;
-                                    }
-                                    else {
-                                        resolved++;
-                                    }
-                                    if (resolved >= data.tvshows.length - 1) {
-                                        XBMC_API.resolveDirectPromise(defer, data);
+                                    var show = shows.filter(function (item) {
+                                        return item.tvshowid == episodes_data.episodes[episodes_data.episodes.length - 1].tvshowid
+                                    })[0];
+                                    show.latest_season = episodes_data.episodes[episodes_data.episodes.length - 1].season;
+                                    show.latest_episode = episodes_data.episodes[episodes_data.episodes.length - 1].episode;
+                                    resolved++;
+                                    if (resolved >= shows.length - 1) {
+                                        XBMC_API.resolveDirectPromise(defer, shows);
                                     }
                                 });
                             i++;
-                            if (i == data.tvshows.length) {
+                            if (i == shows.length) {
                                 $interval.cancel(interval);
                             }
                         }, 10);
